@@ -1,0 +1,185 @@
+
+/* HOME PAGE */
+.home-page-btn {
+    background-color: #1e7a34; 
+    color: white;
+    padding: 12px 20px;
+    font-size: 1.4rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.3); 
+  }
+  .home-page-btn:hover{
+    background-color: #223a29f1; 
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4); 
+  }
+
+/* LOGIN/SIGNUP PAGE */
+  .form-submit-button {
+    background-color: #1e7a34;
+    border-color: black;
+    width: 250px;
+    height: 35px;
+    color: white;
+    border-radius: 5%;
+    margin-top: 20px; 
+    cursor: pointer;
+  }
+  
+  .form-submit-button:hover {
+    background-color: #1e7c34;
+     
+  }
+
+  /* PETS PAGE/PAGE BY TYPE */
+  .pets-page.see-more-btn{
+    background:  #1e7a34;
+    /* width: 170px; */
+    color: #fefffe;
+    border: none;
+    padding: 8px 50px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 17px;
+    transition:  background-color 0.3s ease;
+   
+  }
+  .pets-page.see-more-btn:hover{
+    background-color: #124b1f;
+  }
+  .add-pet-button{
+    background:  #1e7a34;
+    color: #fefffe;
+    border: none;
+    padding: 8px 50px;
+    border-radius: 500px;
+    cursor: pointer;
+    transition: transform 0.3s ease-out, background-color 0.3s ease;
+    font-size: 22px;
+    margin-right: 30px;
+    position: fixed;
+    right: 0;
+    z-index: 10000;
+  }
+  .add-pet-button:hover {
+    background-color: #124b1f;
+    transform: scale(1.2); 
+   
+  }
+
+
+.pagination button{
+  /* padding: 8px 16px; */
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  background-color: #f4f4f4;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  width: 80px;
+  text-align: center;
+  height: 40px;
+}
+.pagination button:hover {
+  background-color: #ddd;
+}
+
+.pagination button:disabled {
+  background-color: #eee;
+  cursor: not-allowed;
+}
+
+  /* FAVORITES */
+  .favorite-see-more-btn {
+    position: absolute;
+    bottom: 15px;
+    right: 20px;
+    padding: 8px 16px;
+    background-color: #1e7a34;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+    
+  }
+
+  /* PROFILE */
+  .change-password-btn {
+    background-color: #e0e0e0;
+    color: #333;
+    font-size: 1.1rem;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    display: block;
+    width: 30%;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .change-password-btn:hover {
+    background-color: #ccc;
+  }
+  .password-submit-btn {
+    width: 100%; 
+    padding: 10px;
+    background-color: #1e7a34;
+    color: white;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 10px 0; 
+  }
+  
+
+/* PETS DETAILS PAGE */
+.submit-review-btn {
+  margin-top: 15px;
+  padding: 12px 30px;
+  background-color:#1e7a34;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: block;
+  width: 100%;  
+  text-align: center;
+}
+
+.submit-review-btn:hover {
+  background-color: #1e7a34;
+}
+
+
+.rent-button {
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  position: absolute; 
+  bottom: 30px; 
+  right: 40px; 
+  background-color: #1e7a34;
+  color: white;
+  border: none;
+  width: 200px;
+  border-radius: 8px; 
+  padding: 15px 30px; 
+  font-size: 1.6rem; 
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.rent-button:hover {
+  background-color: #1e7a34; 
+  transform: scale(1.05); 
+}
+
+   
+  
+  

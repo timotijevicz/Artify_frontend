@@ -1,0 +1,172 @@
+ .card {
+    background-color: #FFF8C6;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    width: 320px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.image-container {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.card img {
+    width: 100%;
+    height: 380px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+
+
+.like-button {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #FFFFFF;
+    border: none;
+    padding: 10px;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+}
+
+.like-button i {
+    font-size: 20px;
+    color: #2D2D2D;
+}
+
+.like-button.liked i {
+    color: #9A1F40;
+}
+
+.card-info {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.card-info h3 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2E4057;
+}
+
+.card-info p {
+    font-size: 14px;
+    color: #2D2D2D;
+    margin-top: 4px;
+}
+
+.card-price {
+    font-size: 22px;
+    font-weight: bold;
+    color: #d8c47c;
+    margin-top: 8px;
+}
+
+.old-price {
+    color: red;
+    margin-right: 10px;
+}
+  
+.line-through {
+    text-decoration: line-through;
+}
+  
+.text-gray-500 {
+  color: #6b6b6b;
+}
+
+.text-md {
+  font-size: 16px;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.text-green-500 {
+  color: green;
+}
+
+.text-red-500 {
+  color: red;
+}
+
+/* Stil za status umetničkog dela */
+
+.status-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-circle {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+
+.status-dostupno {
+  color: #28a745 !important; /* Zeleno za dostupno */
+}
+
+.status-rezervisano {
+  color: #dc3545 !important; /* Crveno za rezervisano */
+}
+
+.status-prodato {
+  color: #dc3545 !important; /* Crveno za prodato */
+  text-decoration: line-through !important; /* Precrtano za prodato */
+}
+
+/* Stil za link umetnika */
+.artist-link {
+  color: #9A1F40;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.artist-link:hover {
+  text-decoration: underline;
+}
+
+/* Stil za modal */
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  width: 80%;
+  max-width: 500px;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 30px;
+  cursor: pointer;
+} 
