@@ -1,275 +1,397 @@
-/* Glavni navbar stil */
-  .navbar {
-    background: #2E4057; /* Fallback boja ako linear-gradient ne radi */
-    /* background: linear-gradient(90deg, rgb(91, 131, 150) 0%, rgb(26, 23, 23) 100%); Glatki prelaz iz jedne tamne nijanse u drugu */
-    height: 80px; /* Fiksna visina navbar-a */
-    display: flex; /* Fleksibilni raspored za poravnanje elemenata */
-    justify-content: center; /* Centriranje sadržaja po horizontali */
-    align-items: center; /* Centriranje sadržaja po vertikali */
-    font-size: 1.2rem; /* Povećana veličina fonta za bolju čitljivost */
-    position: sticky; /* Navbar ostaje na vrhu prilikom skrolovanja */
-    top: 0; /* Fiksira navbar na vrhu */
-    z-index: 999; /* Osigurava da navbar bude iznad ostalih elemenata */
-  }
- 
-/* Kontejner unutar navbar-a */
-  .navbar-container {
-    display: flex;
-    justify-content: space-between; /* razmak izmedju logotipa i menija */
+/* Ako već imaš :root u Home.css, ovo možeš obrisati ovde.
+   Ali zgodno je da Navbar bude samostalan. */
+:root{
+  --bg:#0b1220;
+  --bg2:#0a1020;
+  --stroke: rgba(255,255,255,.08);
+  --text:#e9f0ff;
+  --muted: rgba(233,240,255,.72);
+  --accent:#5b5cff;
+  --radius: 18px;
+}
+
+/* NAVBAR */
+.navbar{
+  position: sticky;
+  top: 0;
+  z-index: 999;
+
+  /* Artify background */
+  /* background:
+    radial-gradient(700px 220px at 20% 10%, rgba(91,92,255,.22), transparent 55%),
+    radial-gradient(600px 220px at 85% 30%, rgba(120,160,255,.12), transparent 55%),
+    linear-gradient(180deg, rgba(10,16,32,.88), rgba(11,18,32,.70)); */
+  background: rgba(10,16,32,.92); /* jednobojno */
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.navbar-container{
+  height: 74px;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 18px;
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* LOGO */
+.navbar-logo{
+  color: var(--text);
+  text-decoration: none;
+  font-size: 1.35rem;
+  font-weight: 900;
+  letter-spacing: .3px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.fa-thin{
+  color: rgba(91,92,255,.95);
+  font-size: 1.15rem;
+}
+
+/* MENU (desktop) - jedna linija */
+.nav-menu{
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  list-style: none;
+  margin: 0;
+  padding: 0 8px;
+
+  /* ključno: ostaje u jednoj liniji */
+  flex-wrap: nowrap;
+  white-space: nowrap;
+
+  /* ako ima previše linkova (role-based), ne lomi red nego skroluje */
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  scrollbar-width: none; /* firefox */
+}
+.nav-menu::-webkit-scrollbar{ display: none; } /* chrome */
+
+.nav-item{
+  height: 74px;
+  display: flex;
+  align-items: center;
+}
+
+/* LINKS */
+.nav-links{
+  color: rgba(233,240,255,.82);
+  text-decoration: none;
+
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+
+  padding: 0 12px;
+  border-radius: 999px;
+
+  font-size: 0.98rem;
+  font-weight: 600;
+
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease, border-color 160ms ease;
+  border: 1px solid transparent;
+}
+
+.nav-links:hover{
+  background: rgba(255,255,255,.06);
+  border-color: rgba(255,255,255,.08);
+  color: rgba(233,240,255,.95);
+  transform: translateY(-1px);
+}
+
+.nav-links.active{
+  background: rgba(91,92,255,.16);
+  border-color: rgba(91,92,255,.24);
+  color: rgba(233,240,255,.96);
+}
+
+/* AUTH DESKTOP */
+.auth-section{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 190px;
+}
+
+.auth-buttons{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Premium buttons */
+.btn-login,
+.btn-register{
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(255,255,255,.14);
+  transition: background 160ms ease, transform 160ms ease, border-color 160ms ease, color 160ms ease;
+  white-space: nowrap;
+}
+
+.btn-login{
+  color: rgba(233,240,255,.88);
+  background: rgba(255,255,255,.04);
+}
+
+.btn-login:hover{
+  background: rgba(255,255,255,.07);
+  border-color: rgba(255,255,255,.18);
+  transform: translateY(-1px);
+}
+
+.btn-register{
+  color: #fff;
+  background: var(--accent);
+  border-color: rgba(255,255,255,.12);
+  box-shadow: 0 14px 36px rgba(91,92,255,.22);
+}
+
+.btn-register:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 16px 44px rgba(91,92,255,.28);
+}
+
+/* PROFILE */
+.profile-section{
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.profile-btn{
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.04);
+  color: rgba(233,240,255,.88);
+  cursor: pointer;
+  transition: background 160ms ease, transform 160ms ease, border-color 160ms ease;
+}
+
+.profile-btn:hover{
+  background: rgba(255,255,255,.07);
+  border-color: rgba(255,255,255,.18);
+  transform: translateY(-1px);
+}
+
+.profile-dropdown{
+  position: absolute;
+  right: 0;
+  top: 52px;
+  min-width: 170px;
+
+  background: rgba(10,16,32,.92);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 14px;
+  padding: 8px;
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 22px 60px rgba(0,0,0,.35);
+}
+
+.profile-dropdown a,
+.profile-dropdown button{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  padding: 10px 10px;
+  border-radius: 10px;
+
+  color: rgba(233,240,255,.86);
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+
+  font-weight: 650;
+  transition: background 140ms ease, color 140ms ease;
+}
+
+.profile-dropdown a:hover,
+.profile-dropdown button:hover{
+  background: rgba(255,255,255,.06);
+  color: rgba(233,240,255,.96);
+}
+
+/* MOBILE ICON */
+.menu-icon{
+  display: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.04);
+  color: rgba(233,240,255,.92);
+  cursor: pointer;
+}
+
+/* Auth in mobile menu */
+.nav-auth-mobile{
+  display: none;
+}
+.nav-auth-link{
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.98rem;
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255,255,255,.14);
+  color: rgba(233,240,255,.9);
+  background: rgba(255,255,255,.04);
+}
+.nav-auth-link-accent{
+  background: rgba(91,92,255,.18);
+  border-color: rgba(91,92,255,.28);
+}
+
+/* RESPONSIVE */
+@media (max-width: 960px){
+  .menu-icon{
+    display: inline-flex;
     align-items: center;
-    height: 80px;
-    max-width: 1500px; /* maximalna sirina navbara*/
+    justify-content: center;
+  }
+
+  /* sakrij desktop auth dugmad na mobilnom (imamo u meniju) */
+  .auth-buttons{
+    display: none;
+  }
+
+  /* mobile menu */
+  .nav-menu{
+    position: absolute;
+    left: 0;
+    top: 74px;
     width: 100%;
-    padding: 0 20px;
-  }
+    padding: 12px 14px 16px;
 
-  /* stil logotipa*/  
-  .navbar-logo {
-    color: #FFD65A ; 
-    justify-self: start;
-    margin-left: 20px;
-    margin-top: 0;
-    cursor: pointer;
-    text-decoration: none; /* uklanja podvlacenje linka*/
-    font-size: 1.9rem; /*povecava velicinu logotipa*/
-    display: flex;
-    font-weight: bold;
-    text-decoration: italic;
-    align-items: center;
-    line-height: 1.2;
-    cursor: pointer; 
-  }
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
 
-  
-  /* Stil za ikonu u logotipu */
-  .fa-thin {
-    margin-left: 0.5rem; /*razmak izmedju texta i ikone*/
-    font-size: 1.8rem;
-    color: #FFD65A ; /*bordo za akcenat*/
-  }
-  
-  /* Navigacioni meni */
-  .nav-menu {
-    display: grid;
-    grid-template-columns: repeat(4, auto);
-    grid-gap: 10px;
-    list-style: none; /*uklanja standardne tackice liste*/
-    text-align: center;
-    width: 60vw; /*ogranicava sirinju menija*/
-    justify-content: flex-end; /*poravnava meni ka desnoj strani*/
-    margin-right: 2rem;
-    transition: all 0.5s ease-in-out; /*glatka animacija pri promeni*/
-    z-index: 1000;
+    background: rgba(10,16,32,.94);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    transform: translateY(-10px);
+    opacity: 0;
+    pointer-events: none;
   }
 
   .nav-menu.active{
-    transform: translateX(0);
+    transform: translateY(0);
     opacity: 1;
+    pointer-events: auto;
   }
-  
-  /*stil za stavke u meniju*/
-  .nav-item {
-    height: 80px;
+
+  .nav-item{
+    height: auto;
   }
-  
-  /*linkovi u meniju*/
-  .nav-links {
-    color: #2d2d2d; /*tamno siva za text*/
+
+  .nav-links{
+    height: 44px;
+    border-radius: 12px;
+    justify-content: center;
+  }
+
+  .nav-auth-mobile{
     display: flex;
-    align-items: center;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    height: 100%;
-    transition: all 0.3s ease-in-out;
-  }
-  
-  /*efekat hover na linkovima*/
-  .nav-links:hover {
-    background-color: #e0e0e0; 
-    color: #9A1F40;
-    height: 80px;
-    border-radius: 5px;
-    border-bottom: 4px solid #D4af37;
-    transition: all 0.3s ease-in-out;
-  }
-  
-  /*fokusirani linkovi u meniju*/
-  .nav-links:focus {
-    outline: 2px solid #D4af37; /*zlatna za fokus*/
-    border-radius: 4px;
-  }
-  
-  .fa-bars {
-    color: #2d2d2d;
-  }
-  
-  .nav-links-mobile {
-    display: none;
-  }
-  
-  .menu-icon {
-    display: block;
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 2rem;
-    cursor: pointer;
-    color: white;
-    z-index: 1001;
-  }
-  
-
-  .sign-up {
-    display: inline-block;
-    margin: 20px auto;
-    width: 80px;
-    text-align: center;
-    padding: 10px 20px;
-    font-size: 1.2rem;
-    color: #fff;
-    background: #9A1F40;
-    text-decoration: none;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .sign-up:hover {
-    background: #D4af37;
-    color: #2d2d2d;
-  }
-
-  /* NOVO */
-  .auth-buttons{
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    height: 80px;
-  }
-
-  .btn-login, .btn-register {
-    display: flex;
-    color: #fff; /* Bele boje za tekst */
-    background-color: #2d2d2d; /* Bordo boja za dugme */
-    text-decoration: none;
-    border: 1px solid transparent; 
-    padding: 5px 5px;
-    border-radius: 20px;
-    transition: all 0.3s ease;
-    display: inline-block;
-    margin-top: auto;
-    margin-bottom: auto;
-   
-  }
-
-  .btn-login:hover, .btn-register:hover {
-    color: #f5f5f5;
-    background-color: #9A1F40;
-    text-decoration: none;
-    border: 1px solid #D4af37; /*obrub*/
-    padding: 5px 5px;
-    border-radius: 20px;
-    transition: 0.3s, color 0.3s;
-    display: inline-block;
-  }
-  
-  .menu-icon {
-    display: none;
-}
-  
-  @media screen and (max-width: 960px) {
-    .nav-menu {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        height: 100vh; 
-        position: absolute;
-        top: 80px;
-        left: 0;
-        transform: translateX(-100%);
-        opacity: 0;
-        transition: all 0.5s ease-in-out;
-    }
-  
-
-    .nav-menu.active {
-        background: #2E4057;
-        left: 0;
-        opacity: 1;
-        transition: all 0.5s ease;
-        transform: translateX(0);
-        z-index: 1000; 
-    }
-  
-    .nav-links {
-        text-align: center;
-        padding: 0.3rem;
-        width: 100%;
-        display: table;
-    }
-  
-    .nav-links:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-        color: #D4af37;
-        transition: all 0.3s ease-in-out;
-    }
-  
-    .navbar-logo {
-        position: absolute;
-        top: 0;
-        left: 0;
-        transform: translate(25%, 50%);
-        margin-left: 8px;
-        font-size: 1.6rem;
-        line-height: 1.6;
-    }
-  
-    .menu-icon {
-        display: block;
-        color: white;
-        position: absolute;
-        top: 0;
-        right: 0;
-        transform: translate(-100%, 60%);
-        font-size: 1.8rem;
-        cursor: pointer;
-    }
-  
-    .fa-times {
-        color: #fff;
-        font-size: 2rem;
-    }
-  
-    .nav-links-mobile {
-        display: block;
-        text-align: center;
-        margin: 2rem auto;
-        border-radius: 4px;
-        width: 80%;
-        text-decoration: none;
-        font-size: 1.5rem;
-        background-color: transparent;
-        color: #fff;
-        padding: 14px 20px;
-        border: 1px solid #fff;
-        transition: all 0.3s ease-out;
-    }
-  
-    .nav-links-mobile:hover {
-        background: #fff;
-        color: #242424;
-        transition: 250ms;
-    }
-  
-    .sign-up {
-      display: block; 
-      margin: 20px auto; 
-      width: 80%; 
-      text-align: center;
-  }
-  .auth-buttons{
-    display: none;
+    gap: 10px;
+    margin-top: 8px;
   }
 }
-  
+
+/* =========================
+   FAVORITES ICON (ARTIFY)
+   ========================= */
+
+.favorites-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+
+  text-decoration: none;
+  cursor: pointer;
+
+  transition: all 160ms ease;
+}
+
+.favorites-btn i {
+  font-size: 16px;
+}
+
+.favorites-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+}
+
+.favorites-btn.active {
+  border-color: rgba(255, 100, 120, 0.6);
+  color: #ff6b81;
+  background: rgba(255, 107, 129, 0.12);
+}
+
+/* Badge (broj favorita) */
+.favorites-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+
+  border-radius: 999px;
+
+  background: linear-gradient(135deg, #ff6b81, #ff3d61);
+  color: #fff;
+
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+
+  box-shadow: 0 6px 14px rgba(255, 61, 97, 0.45);
+}

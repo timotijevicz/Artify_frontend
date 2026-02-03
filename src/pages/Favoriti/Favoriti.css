@@ -1,0 +1,240 @@
+/* ===== FAVORITI (ARTIFY) ===== */
+
+.favorites-page {
+  padding-bottom: 32px;
+}
+
+/* HERO */
+.favorites-hero {
+  padding: 22px 0 8px;
+}
+
+.favorites-badge {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.favorites-hero-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.favorites-title {
+  margin: 0;
+  font-size: 34px;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.favorites-subtitle {
+  margin: 8px 0 0;
+  max-width: 720px;
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1.5;
+}
+
+.favorites-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Buttons */
+.favorites-btn {
+  height: 40px;
+  padding: 0 14px;
+
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.92);
+
+  font-size: 13px;
+  font-weight: 800;
+
+  cursor: pointer;
+  transition: all 160ms ease;
+}
+
+.favorites-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+}
+
+.favorites-btn:active {
+  transform: translateY(0px);
+  box-shadow: none;
+}
+
+.favorites-link {
+  height: 40px;
+  padding: 0 14px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.92);
+
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+
+  transition: all 160ms ease;
+}
+
+.favorites-link:hover {
+  background: rgba(255, 255, 255, 0.10);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+}
+
+/* CONTENT */
+.favorites-section {
+  margin-top: 14px;
+}
+
+.favorites-meta {
+  margin: 10px 0 12px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.favorites-meta.error {
+  color: rgba(255, 107, 129, 0.95);
+}
+
+/* GRID */
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* EMPTY */
+.favorites-empty {
+  display: grid;
+  place-items: center;
+  padding: 28px 0 20px;
+}
+
+.favorites-empty-card {
+  max-width: 520px;
+  width: 100%;
+
+  padding: 18px 18px 16px;
+  border-radius: 18px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(20, 20, 22, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  text-align: center;
+}
+
+.favorites-empty-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+
+  display: grid;
+  place-items: center;
+
+  margin: 0 auto 10px;
+  border: 1px solid rgba(255, 107, 129, 0.28);
+  background: rgba(255, 107, 129, 0.12);
+  color: #ff6b81;
+}
+
+.favorites-empty-card h2 {
+  margin: 8px 0 6px;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.favorites-empty-card p {
+  margin: 0 0 14px;
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1.5;
+}
+
+.favorites-empty-cta {
+  height: 42px;
+  padding: 0 16px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.95);
+
+  font-size: 13px;
+  font-weight: 900;
+  text-decoration: none;
+
+  transition: all 160ms ease;
+}
+
+.favorites-empty-cta:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+}
+
+/* RESPONSIVE */
+@media (max-width: 1100px) {
+  .favorites-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 820px) {
+  .favorites-hero-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .favorites-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .favorites-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .favorites-title {
+    font-size: 28px;
+  }
+
+  .favorites-actions {
+    width: 100%;
+  }
+
+  .favorites-btn,
+  .favorites-link {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,252 @@
+:root{
+  --artify-dark: #2D2D2D;
+  --artify-beige: #F5F5F5;
+  --artify-lemon: #FFF8C6;
+
+  --artify-burgundy: #9A1F40;
+  --artify-gold: #D4AF37;
+
+  --artify-navy: #2E4057;
+  --artify-lightgray: #E0E0E0;
+}
+
+.artify-auth-page{
+  min-height: 100vh;
+  background: var(--artify-beige);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  color: var(--artify-dark);
+}
+
+.artify-auth-card{
+  width: min(1100px, 100%);
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--artify-lightgray);
+  box-shadow: 0 18px 50px rgba(45,45,45,0.12);
+  background: var(--artify-lemon);
+}
+
+.artify-auth-left{
+  padding: 40px 36px;
+  background: var(--artify-beige);
+}
+
+.artify-auth-header{ margin-bottom: 18px; }
+
+.artify-auth-title{
+  font-size: 34px;
+  margin: 0 0 8px 0;
+  color: var(--artify-navy);
+  letter-spacing: -0.5px;
+}
+
+.artify-auth-subtitle{
+  margin: 0;
+  color: rgba(45,45,45,0.85);
+  line-height: 1.5;
+}
+
+.artify-auth-form{
+  display: grid;
+  gap: 14px;
+}
+
+.artify-field{ display: grid; gap: 7px; }
+
+.artify-label{
+  font-size: 13px;
+  color: rgba(45,45,45,0.9);
+}
+
+.artify-input{
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid var(--artify-lightgray);
+  outline: none;
+  background: #fff;
+  color: var(--artify-dark);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.artify-textarea{
+  min-height: 92px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--artify-lightgray);
+  outline: none;
+  background: #fff;
+  color: var(--artify-dark);
+  resize: vertical;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.artify-input:focus,
+.artify-textarea:focus{
+  border-color: var(--artify-burgundy);
+  box-shadow: 0 0 0 4px rgba(154,31,64,0.12);
+}
+
+.artify-grid2{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.artify-section-title{
+  margin-top: 6px;
+  font-weight: 800;
+  color: var(--artify-navy);
+  letter-spacing: 0.2px;
+  position: relative;
+  padding-left: 12px;
+}
+
+.artify-section-title::before{
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--artify-gold);
+  box-shadow: 0 0 0 4px rgba(212,175,55,0.18);
+}
+
+.artify-error{
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(154,31,64,0.10);
+  border: 1px solid rgba(154,31,64,0.25);
+  color: var(--artify-burgundy);
+  font-size: 14px;
+}
+
+.artify-btn{
+  position: relative;
+  height: 46px;
+  border: none;
+  border-radius: 14px;
+  background: var(--artify-burgundy);
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform .12s ease, background .12s ease;
+}
+
+.artify-btn:hover{
+  background: #861a37;
+  transform: translateY(-1px);
+}
+
+.artify-btn:disabled{
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.artify-btn-glow{
+  position: absolute;
+  inset: -40%;
+  background: radial-gradient(circle, rgba(212,175,55,0.35), transparent 55%);
+  transform: translateX(-40%);
+  transition: transform .5s ease;
+}
+
+.artify-btn:hover .artify-btn-glow{ transform: translateX(40%); }
+
+.artify-auth-footnote{
+  font-size: 13px;
+  color: rgba(45,45,45,0.75);
+}
+
+.artify-auth-footnote a,
+.artify-auth-switch a{
+  color: var(--artify-burgundy);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.artify-auth-switch{
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(45,45,45,0.25);
+  font-size: 13px;
+  color: rgba(45,45,45,0.8);
+}
+
+/* RIGHT PANEL */
+.artify-auth-right{
+  position: relative;
+  background: var(--artify-navy);
+  min-height: 560px;
+}
+
+.artify-auth-image{
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: saturate(0.95) contrast(1.05);
+  opacity: 0.95;
+}
+
+.artify-auth-overlay{
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(46,64,87,0.25),
+    rgba(46,64,87,0.75)
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 22px;
+}
+
+.artify-auth-badge{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  padding: 10px 12px;
+  border-radius: 999px;
+  background: rgba(245,245,245,0.14);
+  border: 1px solid rgba(224,224,224,0.28);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.artify-auth-badge .dot{
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--artify-gold);
+  box-shadow: 0 0 0 4px rgba(212,175,55,0.18);
+}
+
+.artify-auth-quote{
+  color: rgba(245,245,245,0.95);
+  font-size: 16px;
+  line-height: 1.6;
+  max-width: 330px;
+  border-left: 3px solid var(--artify-gold);
+  padding-left: 12px;
+}
+
+@media (max-width: 900px){
+  .artify-auth-card{ grid-template-columns: 1fr; }
+  .artify-auth-right{ min-height: 240px; }
+  .artify-grid2{ grid-template-columns: 1fr; }
+}
