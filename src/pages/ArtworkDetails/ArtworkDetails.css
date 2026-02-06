@@ -1,0 +1,297 @@
+/* ArtworkDetails.artify.css */
+:root{
+  --af-bg: #0b0f17;
+  --af-border: rgba(255,255,255,.10);
+  --af-text: rgba(255,255,255,.92);
+  --af-muted: rgba(255,255,255,.65);
+  --af-glow: rgba(173, 216, 255, .18);
+}
+
+.af-page{
+  min-height: 100vh;
+  background:
+    radial-gradient(900px 500px at 20% 10%, var(--af-glow), transparent 60%),
+    radial-gradient(700px 450px at 85% 15%, rgba(255, 196, 240, .12), transparent 55%),
+    radial-gradient(800px 600px at 55% 95%, rgba(170, 255, 220, .10), transparent 60%),
+    var(--af-bg);
+  color: var(--af-text);
+  padding: 28px 16px 48px;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+}
+
+.af-shell{ max-width: 1120px; margin: 0 auto; }
+
+.af-top{ display:flex; align-items:flex-start; gap: 16px; margin-bottom: 18px; }
+
+.af-back{
+  display:inline-flex; align-items:center; gap:8px;
+  color: var(--af-muted); text-decoration:none;
+  padding: 10px 12px; border: 1px solid var(--af-border);
+  background: rgba(0,0,0,.12); border-radius: 14px;
+  backdrop-filter: blur(10px);
+  transition: transform .15s ease, background .15s ease;
+}
+.af-back:hover{ transform: translateY(-1px); background: rgba(255,255,255,.06); }
+
+.af-titleWrap{ flex:1; min-width: 0; }
+.af-title{
+  font-size: clamp(22px, 3.3vw, 34px);
+  line-height: 1.1; margin: 2px 0 8px; letter-spacing: .2px;
+}
+
+.af-sub{ display:flex; align-items:center; gap: 10px; color: var(--af-muted); flex-wrap: wrap; }
+.af-dot{ width: 4px; height: 4px; border-radius: 99px; background: rgba(255,255,255,.35); }
+.af-artist{ color: rgba(255,255,255,.78); font-weight: 600; }
+
+.af-live{
+  color: rgba(255,255,255,.78);
+  font-weight: 800;
+  letter-spacing: .2px;
+}
+
+.af-grid{
+  display:grid;
+  grid-template-columns: 1.55fr .75fr;
+  gap: 16px;
+}
+@media (max-width: 940px){ .af-grid{ grid-template-columns: 1fr; } }
+
+.af-mediaCard, .af-sideCard{
+  border: 1px solid var(--af-border);
+  background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+  border-radius: 22px;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 60px rgba(0,0,0,.35);
+}
+
+.af-mediaFrame{
+  position: relative;
+  aspect-ratio: 16 / 10;
+  min-height: 520px;
+  background: rgba(0,0,0,.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.af-img{
+  border-radius: 16px;
+}
+.af-img{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;      /* ✅ NE SEČE, prikazuje celu sliku */
+  display:block;
+  transform: none;          /* nema zoom koji može da “sakrije” ivice */
+  transition: none;
+  padding: 12px;            /* malo “frame” osećaja */
+  background: rgba(0,0,0,.18);
+}
+@media (max-width: 940px){ .af-mediaFrame{ min-height: 380px; } }
+
+
+.af-imgFallback{
+  height: 100%;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap: 10px; color: var(--af-muted);
+}
+.af-fallbackIcon{ font-size: 34px; }
+
+.af-desc{ padding: 16px 18px 18px; border-top: 1px solid var(--af-border); }
+.af-descLabel{
+  font-size: 12px; text-transform: uppercase; letter-spacing: .14em;
+  color: rgba(255,255,255,.62); margin-bottom: 8px;
+}
+.af-desc p{ margin: 0; color: rgba(255,255,255,.82); line-height: 1.55; }
+
+.af-sideCard{ padding: 16px; display:flex; flex-direction:column; gap: 12px; }
+
+.af-priceBox{
+  border: 1px solid var(--af-border);
+  border-radius: 18px;
+  padding: 14px 14px 12px;
+  background: rgba(0,0,0,.18);
+}
+.af-priceLabel{
+  font-size: 12px; color: rgba(255,255,255,.68);
+  text-transform: uppercase; letter-spacing: .14em; margin-bottom: 6px;
+}
+.af-price{ font-size: 30px; font-weight: 800; letter-spacing: .2px; }
+
+.af-auctionMeta{
+  margin-top: 10px;
+  border-top: 1px solid var(--af-border);
+  padding-top: 10px;
+  display:flex; flex-direction:column; gap: 8px;
+}
+.af-miniRow{ display:flex; justify-content:space-between; gap: 10px; color: rgba(255,255,255,.78); }
+.af-miniRow span{ color: rgba(255,255,255,.60); }
+
+.af-actions{ display:flex; gap: 10px; margin-top: 12px; }
+
+.af-btn{
+  border-radius: 14px;
+  border: 1px solid var(--af-border);
+  padding: 10px 12px;
+  cursor:pointer;
+  font-weight: 700;
+  background: rgba(255,255,255,.06);
+  color: var(--af-text);
+  transition: transform .15s ease, background .15s ease, opacity .15s ease;
+}
+.af-btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.10); }
+.af-btn:disabled{ opacity: .55; cursor: not-allowed; transform: none; }
+
+.af-btnPrimary{
+  flex: 1;
+  background: linear-gradient(180deg, rgba(125, 211, 252, .25), rgba(59, 130, 246, .10));
+  border-color: rgba(125, 211, 252, .35);
+}
+
+.af-inlineError{
+  margin: 8px 0 10px;
+  color: rgba(248, 113, 113, .95);
+  font-weight: 800;
+}
+.af-inlineNote{
+  margin-top: 10px;
+  color: rgba(255,255,255,.65);
+  font-weight: 600;
+}
+
+.af-specs{
+  border: 1px solid var(--af-border);
+  border-radius: 18px;
+  padding: 12px 14px;
+  background: rgba(0,0,0,.14);
+  display:flex; flex-direction:column; gap: 10px;
+}
+.af-specRow{ display:flex; justify-content:space-between; gap: 10px; color: rgba(255,255,255,.80); }
+.af-specRow span{ color: rgba(255,255,255,.60); }
+
+.af-bio{
+  border: 1px solid var(--af-border);
+  border-radius: 18px;
+  padding: 12px 14px;
+  background: rgba(0,0,0,.12);
+}
+.af-bioLabel{
+  font-size: 12px; text-transform: uppercase; letter-spacing: .14em;
+  color: rgba(255,255,255,.62); margin-bottom: 8px;
+}
+.af-bioText{ color: rgba(255,255,255,.80); line-height: 1.55; }
+
+/* badge */
+.af-badge{
+  display:inline-flex; align-items:center;
+  padding: 6px 10px; border-radius: 999px;
+  font-size: 12px; font-weight: 800;
+  border: 1px solid var(--af-border);
+  background: rgba(255,255,255,.06);
+}
+.af-badge-ok{ border-color: rgba(134, 239, 172, .35); background: rgba(134, 239, 172, .10); }
+.af-badge-warn{ border-color: rgba(253, 224, 71, .35); background: rgba(253, 224, 71, .10); }
+.af-badge-danger{ border-color: rgba(248, 113, 113, .35); background: rgba(248, 113, 113, .10); }
+.af-badge-info{ border-color: rgba(125, 211, 252, .35); background: rgba(125, 211, 252, .10); }
+.af-badge-muted{ opacity: .85; }
+
+/* Aukcija panel */
+.af-auctionPanel{
+  border: 1px solid var(--af-border);
+  border-radius: 18px;
+  padding: 12px 14px;
+  background: rgba(0,0,0,.12);
+}
+.af-auctionHead{
+  display:flex; justify-content:space-between;
+  gap: 10px; align-items:baseline;
+  margin-bottom: 10px;
+}
+.af-auctionTitle{ font-weight: 900; letter-spacing: .2px; }
+.af-auctionTop{ color: rgba(255,255,255,.75); }
+
+.af-bidForm{ display:flex; gap: 10px; align-items:center; margin-bottom: 10px; }
+
+.af-input{
+  flex: 1;
+  border-radius: 14px;
+  border: 1px solid var(--af-border);
+  background: rgba(255,255,255,.06);
+  color: var(--af-text);
+  padding: 10px 12px;
+  outline: none;
+}
+.af-input::placeholder{ color: rgba(255,255,255,.45); }
+.af-input:disabled{ opacity: .6; cursor: not-allowed; }
+
+.af-bidsLabel{
+  font-size: 12px; text-transform: uppercase; letter-spacing: .14em;
+  color: rgba(255,255,255,.62);
+  margin: 10px 0 8px;
+}
+
+.af-bids{ display:flex; flex-direction:column; gap: 8px; }
+.af-bidRow{
+  display:flex; justify-content:space-between; align-items:center;
+  padding: 10px 10px; border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.05);
+}
+.af-bidLeft{ display:flex; align-items:center; gap: 10px; min-width: 0; }
+.af-rank{ font-weight: 900; color: rgba(255,255,255,.70); }
+.af-who{
+  color: rgba(255,255,255,.82);
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+.af-bidAmount{ font-weight: 900; }
+.af-mutedLine{ color: rgba(255,255,255,.62); }
+
+/* skeleton + error */
+.af-error{
+  border: 1px solid var(--af-border);
+  border-radius: 22px;
+  padding: 18px;
+  background: rgba(0,0,0,.18);
+}
+.af-errorTitle{ font-size: 18px; font-weight: 900; margin-bottom: 6px; }
+.af-errorText{ color: rgba(255,255,255,.72); margin-bottom: 12px; }
+
+.af-skeleton{
+  border-radius: 22px;
+  border: 1px solid var(--af-border);
+  background: linear-gradient(90deg, rgba(255,255,255,.05), rgba(255,255,255,.09), rgba(255,255,255,.05));
+  background-size: 200% 100%;
+  animation: afShimmer 1.1s infinite linear;
+}
+.af-skelHero{ height: 420px; margin-bottom: 14px; }
+.af-skelCard{ height: 220px; }
+
+@keyframes afShimmer{
+  0%{ background-position: 200% 0; }
+  100%{ background-position: -200% 0; }
+}
+
+.af-btnSmall{
+  padding: 8px 10px;
+  font-size: 13px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.af-bidRowTop{
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.04);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.af-bidsRest{
+  margin-top: 10px;
+  display: grid;
+  gap: 8px;
+}

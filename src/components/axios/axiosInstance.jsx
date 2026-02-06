@@ -1,14 +1,13 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_BASE_URL, 
-  timeout: 10000,
+  baseURL: process.env.REACT_APP_BASE_URL, // npr: https://localhost:7063/api
+  timeout: 15000,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// REQUEST INTERCEPTOR – ubacuje JWT automatski
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("authToken");
@@ -17,20 +16,26 @@ axiosInstance.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
+    console.log(
+      "AXIOS REQUEST:",
+      config.method?.toUpperCase(),
+      config.url,
+      config.headers.Authorization
+    );
+
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// RESPONSE INTERCEPTOR – (opciono) centralni handling 401
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      console.warn("401 Unauthorized – token ne važi ili nije poslat");
-      // ovde MOŽEŠ kasnije dodati redirect na /login
-      // window.location.href = "/login";
-    }
+    console.log("AXIOS ERROR:", {
+      url: error?.config?.url,
+      status: error?.response?.status,
+      data: error?.response?.data,
+    });
     return Promise.reject(error);
   }
 );

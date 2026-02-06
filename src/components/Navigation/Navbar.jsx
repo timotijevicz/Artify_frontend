@@ -102,8 +102,8 @@ export default function Navbar() {
           {isUmetnik && (
             <li className="nav-item">
               <Link
-                to="/mojiradovi"
-                className={`nav-links ${isActive("/mojiradovi") ? "active" : ""}`}
+                to="/umetnik/moji-radovi"
+                className={`nav-links ${isActive("/umetnik/moji-radovi") ? "active" : ""}`}
                 onClick={closeMobileMenu}
               >
                 Moji radovi

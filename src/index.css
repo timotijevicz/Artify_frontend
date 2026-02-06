@@ -11,3 +11,36 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+:root {
+  /* BRAND */
+  --artify-black: #0f0f0f;
+  --artify-dark: #181818;
+  --artify-gray-900: #2a2a2a;
+  --artify-gray-700: #555;
+  --artify-gray-500: #888;
+  --artify-gray-300: #ccc;
+  --artify-gray-200: #e6e6e6;
+  --artify-gray-100: #f5f5f5;
+
+  --artify-white: #ffffff;
+  --artify-accent: #111; /* minimalist luxury */
+  --artify-danger: #b00020;
+
+  /* TYPO */
+  --font-main: "Inter", system-ui, sans-serif;
+
+  /* RADIUS */
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
+
+  /* SHADOWS */
+  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 16px 40px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 22px 60px rgba(0, 0, 0, 0.12);
+
+  /* MOTION */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}

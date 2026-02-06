@@ -1,36 +1,53 @@
 import React, { useContext, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
-import axiosInstance from "../../components/axios/axiosInstance.jsx";
+import axiosInstance from "../../components/axios/axiosInstance";
 import { AppContext } from "../../context/AppContext";
 import ArtifyAuthForm from "../../components/AuthForm/AuthForm.jsx";
 
 const fields = [
-  {
-    name: "Email",
-    label: "Email",
-    type: "email",
-    placeholder: "Unesi svoj email",
-    required: true,
-  },
-  {
-    name: "Lozinka",
-    label: "Lozinka",
-    type: "password",
-    placeholder: "Unesi lozinku",
-    required: true,
-  },
+  { name: "Email", label: "Email", type: "email", placeholder: "Unesi svoj email", required: true },
+  { name: "Lozinka", label: "Lozinka", type: "password", placeholder: "Unesi lozinku", required: true },
 ];
 
-export default function ArtifyLogin() {
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+const pickToken = (data) =>
+  data?.token ||
+  data?.Token ||
+  data?.accessToken ||
+  data?.AccessToken ||
+  data?.jwt ||
+  data?.JWT ||
+  data?.authToken ||
+  data?.AuthToken ||
+  data?.data?.token ||
+  data?.data?.accessToken;
 
-  const { login } = useContext(AppContext);
+const extractError = (err) => {
+  const data = err?.response?.data;
+
+  if (typeof data === "string") return data;
+  if (data?.message && typeof data.message === "string") return data.message;
+  if (data?.title && typeof data.title === "string") return data.title;
+
+  // ModelState errors: { field: ["msg"] }
+  if (data && typeof data === "object") {
+    const k = Object.keys(data)[0];
+    const v = data[k];
+    if (Array.isArray(v) && v[0]) return v[0];
+    if (typeof v === "string") return v;
+  }
+
+  return "Neuspešan login. Pokušaj ponovo.";
+};
+
+export default function ArtifyLogin() {
+  const { login } = useContext(AppContext) || {};
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const from = location.state?.from?.pathname || "/home";
 
@@ -40,52 +57,27 @@ export default function ArtifyLogin() {
 
     try {
       const payload = {
-        Email: formData.Email ?? formData.email ?? "",
-        Lozinka: formData.Lozinka ?? formData.lozinka ?? "",
+        Email: formData?.Email ?? formData?.email ?? "",
+        Lozinka: formData?.Lozinka ?? formData?.lozinka ?? "",
       };
 
-      const response = await axiosInstance.post(
-        "/Korisnik/PrijavaKorisnika",
-        payload
-      );
+      const res = await axiosInstance.post("Korisnik/PrijavaKorisnika", payload);
 
-      // ✅ Izvuci token iz response-a (razni backendovi vraćaju razna imena)
-      const data = response.data;
-      const token =
-        data?.token ||
-        data?.Token ||
-        data?.accessToken ||
-        data?.AccessToken ||
-        data?.jwt ||
-        data?.JWT ||
-        data?.authToken ||
-        data?.AuthToken ||
-        data?.data?.token;
+      const token = pickToken(res.data);
 
-      if (!token) {
-        console.warn("Login uspešan, ali token nije pronađen u response.data:", data);
-        toast.error("Login uspešan, ali token nije pronađen. Proveri backend response.");
+      if (!token || typeof token !== "string") {
+        toast.error("Login uspešan, ali token nije pronađen u response-u.");
+        setError("Token nije pronađen. Proveri backend response.");
         return;
       }
 
-      // ✅ Ovo je najbitnije za axios interceptor
-      localStorage.setItem("authToken", token);
+      // ✅ ovo zove tvoj AppContext.login(token) koji setuje localStorage + state
+      login?.(token);
 
-      // (opciono) ako čuvaš i userId/role u localStorage, možeš i to:
-      // if (data?.userId) localStorage.setItem("userId", data.userId);
-
-      // ✅ Tvoj context login (nek dalje radi šta već radi)
-      login(data);
-
-      navigate(from);
+      toast.success("Uspešna prijava!");
+      navigate(from, { replace: true });
     } catch (err) {
-      const data = err?.response?.data;
-
-      const msg =
-        data?.message ||
-        (typeof data === "string" ? data : null) ||
-        "Neuspešan login. Pokušaj ponovo.";
-
+      const msg = extractError(err);
       setError(msg);
       toast.error(msg);
     } finally {

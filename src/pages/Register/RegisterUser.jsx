@@ -3,8 +3,27 @@ import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../../components/axios/axiosInstance";
 import "./Register.css";
 
+const extractError = (err) => {
+  const data = err?.response?.data;
+
+  if (typeof data === "string") return data;
+  if (data?.message && typeof data.message === "string") return data.message;
+  if (data?.title && typeof data.title === "string") return data.title;
+
+  // ModelState: { Field: ["msg"] }
+  if (data && typeof data === "object") {
+    const k = Object.keys(data)[0];
+    const v = data[k];
+    if (Array.isArray(v) && v[0]) return v[0];
+    if (typeof v === "string") return v;
+  }
+
+  return "Greška prilikom registracije.";
+};
+
 export default function RegisterUser() {
   const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -20,30 +39,6 @@ export default function RegisterUser() {
     setFormData((p) => ({ ...p, [name]: value }));
   };
 
-    // hvata string, {message}, i ModelState objekte
-  const extractErrorMessage = (err) => {
-    const data = err?.response?.data;
-
-    // backend vrati string
-    if (typeof data === "string") return data;
-
-    // backend vrati { message: "..." }
-    if (data?.message && typeof data.message === "string") return data.message;
-
-    // backend vrati ModelState: { Field: ["err1", ...], ... }
-    if (data && typeof data === "object") {
-      const keys = Object.keys(data);
-      if (keys.length > 0) {
-        const firstKey = keys[0];
-        const val = data[firstKey];
-        if (Array.isArray(val) && val.length > 0) return val[0];
-        if (typeof val === "string") return val;
-      }
-    }
-
-    return "Greška prilikom registracije.";
-  };
-
   const onSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -55,7 +50,6 @@ export default function RegisterUser() {
 
     setLoading(true);
     try {
-      // ✅ DTO 1:1 sa backendom
       const payload = {
         ImeIPrezime: formData.imeIPrezime,
         Email: formData.email,
@@ -63,11 +57,12 @@ export default function RegisterUser() {
         PotvrdaLozinke: formData.potvrdaLozinke,
       };
 
-      await axiosInstance.post("/Korisnik/RegistracijaKorisnika", payload);
+      // ✅ bez početnog "/" (da ne pravi probleme ako ti je baseURL .../api)
+      await axiosInstance.post("Korisnik/RegistracijaKorisnika", payload);
 
       navigate("/login");
     } catch (err) {
-      setError(extractErrorMessage(err));
+      setError(extractError(err));
     } finally {
       setLoading(false);
     }
@@ -111,6 +106,7 @@ export default function RegisterUser() {
                 value={formData.email}
                 onChange={onChange}
                 disabled={loading}
+                autoComplete="email"
               />
             </label>
 
@@ -120,9 +116,9 @@ export default function RegisterUser() {
                 className="artify-input"
                 type="password"
                 name="lozinka"
-                placeholder="Min 6 karaktera"
+                placeholder="Min 8, veliko+malo slovo i broj"
                 required
-                minLength={6}
+                minLength={8}
                 value={formData.lozinka}
                 onChange={onChange}
                 disabled={loading}
@@ -138,7 +134,7 @@ export default function RegisterUser() {
                 name="potvrdaLozinke"
                 placeholder="Ponovi lozinku"
                 required
-                minLength={6}
+                minLength={8}
                 value={formData.potvrdaLozinke}
                 onChange={onChange}
                 disabled={loading}

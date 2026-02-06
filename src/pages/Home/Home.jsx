@@ -72,7 +72,6 @@ export default function Home() {
       </section>
 
       {/* FEATURES */}
-      {/* FEATURES */}
       <section className="features">
         <h2 className="section-title">Artify, ali kao u galeriji</h2>
         <p className="section-subtitle">
@@ -118,8 +117,6 @@ export default function Home() {
         </div>
       </section>
 
-
-      {/* ZANIMLJIVOSTI / ART HISTORY */}
       <section className="art-facts">
         <div className="facts-head">
           <h2 className="section-title">Zanimljivosti iz istorije umetnosti</h2>
@@ -179,14 +176,12 @@ export default function Home() {
         </div>
 
         <div className="facts-actions">
-          <Link to="/ONama" className="no-underline">
+          <Link to="/about" className="no-underline">
             <button className="btn ghost">Saznaj više o Artify-ju</button>
           </Link>
         </div>
       </section>
 
-      {/* MINI CTA (opciono) */}
-      {/* ... */}
     </div>
   );
 }

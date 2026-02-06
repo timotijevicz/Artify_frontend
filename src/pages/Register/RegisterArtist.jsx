@@ -1,20 +1,32 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 import axiosInstance from "../../components/axios/axiosInstance";
 import "./Register.css";
 
-const ROLE_CLAIM =
-  "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
-const ID_CLAIM =
-  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+const extractError = (err) => {
+  const data = err?.response?.data;
+
+  if (typeof data === "string") return data;
+  if (data?.message && typeof data.message === "string") return data.message;
+  if (data?.title && typeof data.title === "string") return data.title;
+
+  // ModelState: { Field: ["msg"] }
+  if (data && typeof data === "object") {
+    const k = Object.keys(data)[0];
+    const v = data[k];
+    if (Array.isArray(v) && v[0]) return v[0];
+    if (typeof v === "string") return v;
+  }
+
+  return "Greška prilikom registracije umetnika.";
+};
 
 export default function RegisterArtist() {
   const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // SVE za korisnika + dodatno za umetnika
   const [formData, setFormData] = useState({
     imeIPrezime: "",
     email: "",
@@ -25,6 +37,7 @@ export default function RegisterArtist() {
     tehnika: "",
     stil: "",
     specijalizacija: "",
+    grad: "",
     slikaUrl: "",
   });
 
@@ -58,24 +71,12 @@ export default function RegisterArtist() {
         SlikaUrl: formData.slikaUrl || null,
       };
 
-      await axiosInstance.post("/Korisnik/RegistracijaUmetnika", payload);
+      // ✅ bez početnog "/" (da ne pravi probleme ako ti je baseURL .../api)
+      await axiosInstance.post("Korisnik/RegistracijaUmetnika", payload);
 
       navigate("/login");
     } catch (err) {
-      const data = err?.response?.data;
-      const msg =
-        data?.message ||
-        (typeof data === "string" ? data : null) ||
-        (data && typeof data === "object"
-          ? (() => {
-              const k = Object.keys(data)[0];
-              const v = data[k];
-              return Array.isArray(v) ? v[0] : JSON.stringify(v);
-            })()
-          : null) ||
-        "Greška prilikom registracije umetnika.";
-
-      setError(msg);
+      setError(extractError(err));
     } finally {
       setLoading(false);
     }
@@ -94,7 +95,6 @@ export default function RegisterArtist() {
           </div>
 
           <form className="artify-auth-form" onSubmit={onSubmit}>
-            {/* Korisnik deo */}
             <div className="artify-section-title">Nalog</div>
 
             <label className="artify-field">
@@ -122,6 +122,7 @@ export default function RegisterArtist() {
                 value={formData.email}
                 onChange={onChange}
                 disabled={loading}
+                autoComplete="email"
               />
             </label>
 
@@ -132,9 +133,9 @@ export default function RegisterArtist() {
                   className="artify-input"
                   type="password"
                   name="lozinka"
-                  placeholder="Min 6"
+                  placeholder="Min 8, veliko+malo slovo i broj"
                   required
-                  minLength={6}
+                  minLength={8}
                   value={formData.lozinka}
                   onChange={onChange}
                   disabled={loading}
@@ -148,9 +149,9 @@ export default function RegisterArtist() {
                   className="artify-input"
                   type="password"
                   name="potvrdaLozinke"
-                  placeholder="Ponovi"
+                  placeholder="Ponovi lozinku"
                   required
-                  minLength={6}
+                  minLength={8}
                   value={formData.potvrdaLozinke}
                   onChange={onChange}
                   disabled={loading}
@@ -159,7 +160,6 @@ export default function RegisterArtist() {
               </label>
             </div>
 
-            {/* Umetnik deo */}
             <div className="artify-section-title">Umetnički profil</div>
 
             <label className="artify-field">
@@ -237,7 +237,8 @@ export default function RegisterArtist() {
             </button>
 
             <div className="artify-auth-switch">
-              Želite običan nalog? <Link to="/registracija">Registracija korisnika →</Link>
+              Želite običan nalog?{" "}
+              <Link to="/registracija">Registracija korisnika →</Link>
             </div>
           </form>
         </div>
@@ -253,9 +254,7 @@ export default function RegisterArtist() {
               <span className="dot" />
               Artify • creators
             </div>
-            <div className="artify-auth-quote">
-              “Stil je potpis — neka bude tvoj.”
-            </div>
+            <div className="artify-auth-quote">“Stil je potpis — neka bude tvoj.”</div>
           </div>
         </div>
       </div>

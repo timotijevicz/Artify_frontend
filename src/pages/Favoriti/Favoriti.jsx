@@ -1,56 +1,88 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import "./Favoriti.css";
 import Card from "../../components/Card/Card";
 import { AppContext } from "../../context/AppContext";
-import axiosInstance from "../../components/axios/axiosInstance"; // prilagodi putanju ako ti je drugačije
+import axiosInstance from "../../components/axios/axiosInstance";
 
 export default function Favoriti() {
-  const { isKupac, authToken, userId } = useContext(AppContext) || {};
+  const { isKupac, authToken, userId, isLoading } = useContext(AppContext);
 
   const [favoriti, setFavoriti] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const loadFavoriti = async () => {
-    if (!authToken || !userId) return;
+  const mapToCardProps = (fav) => {
+    const delo = fav.umetnickoDelo ?? fav.UmetnickoDelo ?? fav;
+
+    return {
+      id:
+        delo.id ??
+        delo.Id ??
+        fav.umetnickoDeloId ??
+        fav.UmetnickoDeloId ??
+        fav.umetnickoDeloID ??
+        fav.UmetnickoDeloID,
+
+      slikaUrl: delo.slikaUrl ?? delo.SlikaUrl ?? delo.slika ?? "",
+      naziv: delo.naziv ?? delo.Naziv ?? "",
+      cena: delo.cena ?? delo.Cena ?? null,
+      staraCena: delo.staraCena ?? delo.StaraCena ?? null,
+      tehnika: delo.tehnika ?? delo.Tehnika ?? "",
+      status: delo.status ?? delo.Status ?? "",
+      umetnik: delo.umetnik ?? delo.Umetnik ?? "",
+      valuta: "€",
+    };
+  };
+
+  const normalizeError = (err) => {
+    if (!err) return "Greška pri učitavanju favorita.";
+    if (typeof err === "string") return err;
+    if (err.title) return err.title;
+    if (err.message) return err.message;
+    return "Greška pri učitavanju favorita.";
+  };
+
+  const loadFavoriti = useCallback(async () => {
+    if (!authToken || !userId) {
+      setFavoriti([]);
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     setError("");
 
     try {
-      // Ako nemaš interceptor za token, moraš ga poslati ovde:
-      // const res = await axiosInstance.get(`/Favoriti/PrikazOmiljenihDelaPoID/${userId}`, {
-      //   headers: { Authorization: `Bearer ${authToken}` },
-      // });
-
       const res = await axiosInstance.get(
-        `/Favoriti/PrikazOmiljenihDelaPoID/${userId}`
+        `Favoriti/PrikazOmiljenihDelaPoID/${userId}`
       );
 
-      setFavoriti(Array.isArray(res.data) ? res.data : []);
+      const raw = Array.isArray(res.data) ? res.data : [];
+      setFavoriti(raw.map(mapToCardProps).filter((x) => !!x.id));
     } catch (err) {
-      if (err.response?.status === 404) {
-        // tvoj backend vraća 404 kad nema favorita -> tretiramo kao prazno
-        setFavoriti([]);
-      } else {
-        setError(
-          err.response?.data?.message ||
-            (typeof err.response?.data === "string" ? err.response.data : "") ||
-            "Greška pri učitavanju favorita."
-        );
-      }
+      setError(normalizeError(err?.response?.data));
+      setFavoriti([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [authToken, userId]);
 
   useEffect(() => {
     loadFavoriti();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authToken, userId]);
+  }, [loadFavoriti]);
 
-  // Ako nije kupac ili nije ulogovan
+  // ======================
+  // GUARDOVI
+  // ======================
+  if (isLoading || loading) {
+    return (
+      <div className="favorites-page">
+        <div className="favorites-meta">Učitavanje...</div>
+      </div>
+    );
+  }
+
   if (!authToken || !isKupac) {
     return (
       <div className="favorites-page">
@@ -60,7 +92,6 @@ export default function Favoriti() {
           <p className="favorites-subtitle">
             Prijavi se kao <b>kupac</b> da bi koristio favorite.
           </p>
-
           <Link to="/login" className="favorites-empty-cta">
             Prijava
           </Link>
@@ -69,25 +100,34 @@ export default function Favoriti() {
     );
   }
 
+  const handleFavoriteChange = (artworkId, liked) => {
+    if (!liked) {
+      setFavoriti((prev) => prev.filter((x) => x.id !== artworkId));
+    }
+  };
+
+  // ======================
+  // RENDER
+  // ======================
   return (
     <div className="favorites-page">
-      {/* HERO */}
       <header className="favorites-hero">
         <div className="favorites-badge">ARTIFY • Favoriti</div>
-
         <div className="favorites-hero-row">
           <div>
             <h1 className="favorites-title">Tvoja omiljena dela</h1>
             <p className="favorites-subtitle">
-              Lista se učitava direktno sa servera po tvom nalogu.
+              Lista se učitava sa servera.
             </p>
           </div>
-
           <div className="favorites-actions">
-            <button type="button" className="favorites-btn" onClick={loadFavoriti}>
+            <button
+              type="button"
+              className="favorites-btn"
+              onClick={loadFavoriti}
+            >
               Osveži
             </button>
-
             <Link to="/galerija" className="favorites-link">
               Nazad na galeriju
             </Link>
@@ -95,22 +135,13 @@ export default function Favoriti() {
         </div>
       </header>
 
-      {/* CONTENT */}
       <section className="favorites-section">
-        {loading && <div className="favorites-meta">Učitavanje...</div>}
+        {error && <div className="favorites-meta error">{error}</div>}
 
-        {!loading && error && (
-          <div className="favorites-meta error">{error}</div>
-        )}
-
-        {!loading && !error && favoriti.length === 0 && (
+        {!error && favoriti.length === 0 && (
           <div className="favorites-empty">
             <div className="favorites-empty-card">
-              <div className="favorites-empty-icon">
-                <i className="fas fa-heart"></i>
-              </div>
               <h2>Nemaš još favorita</h2>
-              <p>Dodaj delo u favorite klikom na ❤️ u galeriji.</p>
               <Link to="/galerija" className="favorites-empty-cta">
                 Otvori galeriju
               </Link>
@@ -118,23 +149,16 @@ export default function Favoriti() {
           </div>
         )}
 
-        {!loading && !error && favoriti.length > 0 && (
-          <>
-            <div className="favorites-meta">
-              Prikazano: <b>{favoriti.length}</b>
-            </div>
-
-            <div className="favorites-grid">
-              {favoriti.map((fav) => {
-                // backend može vratiti:
-                // - direktno umetničko delo
-                // - ili favorite objekat sa umetnickoDelo poljem
-                const delo = fav.umetnickoDelo ?? fav;
-
-                return <Card key={delo.id || fav.id} {...delo} />;
-              })}
-            </div>
-          </>
+        {!error && favoriti.length > 0 && (
+          <div className="favorites-grid">
+            {favoriti.map((delo) => (
+              <Card
+                key={delo.id}
+                {...delo}
+                onFavoriteChange={handleFavoriteChange}
+              />
+            ))}
+          </div>
         )}
       </section>
     </div>
