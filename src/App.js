@@ -40,6 +40,7 @@ function App() {
         <Route path="/umetnik/izmeni-delo/:id" element={<IzmeniDelo />} />
         <Route path="/artwork/:id" element={<ArtworkDetails />} />
         <Route path="/moje-porudzbine" element={<MojePorudzbine />} />
+        <Route path="/delo/:id" element={<ArtworkDetails />} />
 
         </Routes>
         <Footer />

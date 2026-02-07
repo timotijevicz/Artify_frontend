@@ -1,7 +1,10 @@
 import axios from "axios";
 
+const base = process.env.REACT_APP_BASE_URL || "";
+const baseURL = base.endsWith("/") ? base : `${base}/`; // ✅ MINIMALNO
+
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_BASE_URL, // npr: https://localhost:7063/api
+  baseURL,
   timeout: 15000,
   headers: {
     "Content-Type": "application/json",
@@ -13,6 +16,7 @@ axiosInstance.interceptors.request.use(
     const token = localStorage.getItem("authToken");
 
     if (token) {
+      config.headers = config.headers || {}; // ✅ MINIMALNO (da ne pukne)
       config.headers.Authorization = `Bearer ${token}`;
     }
 

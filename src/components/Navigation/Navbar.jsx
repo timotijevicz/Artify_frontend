@@ -90,7 +90,7 @@ export default function Navbar() {
           {isKupac && (
             <li className="nav-item">
               <Link
-                to="/porudzbine"
+                to="/moje-porudzbine"
                 className={`nav-links ${isActive("/porudzbine") ? "active" : ""}`}
                 onClick={closeMobileMenu}
               >
@@ -142,16 +142,12 @@ export default function Navbar() {
 
         {/* Auth section desktop */}
         <div className="auth-section">
-           {isLoggedIn && (
+           {isLoggedIn && isKupac && (
             <Link
               to="/favoriti"
               className={`favorites-btn ${isActive("/favoriti") ? "active" : ""}`}
-              aria-label="Favoriti"
-            >
+              aria-label="Favoriti" >
               <i className="fas fa-heart"></i>
-
-              {/* badge – kasnije možeš vezati za state */}
-              <span className="favorites-badge">3</span>
             </Link>
           )}
           {isLoggedIn ? (

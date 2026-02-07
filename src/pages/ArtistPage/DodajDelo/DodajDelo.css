@@ -43,7 +43,9 @@
 }
 
 /* ================= TITLE ================= */
-
+.button{
+  background-color: #6b7cff;
+}
 .addWork__title {
   margin-bottom: 20px;
   font-size: 28px;

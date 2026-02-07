@@ -9,7 +9,6 @@ export default function ArtworkDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // ✅ Izvor istine za ulogu/token (kao u Favoriti)
   const { isKupac, authToken, userId, isLoading } = useContext(AppContext);
 
   const [delo, setDelo] = useState(null);
@@ -28,6 +27,23 @@ export default function ArtworkDetails() {
   const [ponudaSending, setPonudaSending] = useState(false);
   const [ponudaErr, setPonudaErr] = useState("");
   const [pollingActive, setPollingActive] = useState(false);
+
+  // sakrivanje ponuda
+  const [showAllBids, setShowAllBids] = useState(false);
+
+  // recenzije
+  const [reviews, setReviews] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [reviewErr, setReviewErr] = useState("");
+
+  const [myReview, setMyReview] = useState(null);
+  const [reviewText, setReviewText] = useState("");
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewSaving, setReviewSaving] = useState(false);
+
+  // finalize aukcije
+  const [finalizing, setFinalizing] = useState(false);
+  const [finalizeErr, setFinalizeErr] = useState("");
 
   const apiOrigin = useMemo(() => {
     const base = axiosInstance?.defaults?.baseURL;
@@ -87,48 +103,141 @@ export default function ArtworkDetails() {
 
   const isAukcija = (delo?.naAukciji ?? delo?.NaAukciji) === true;
 
+  // STATUS (0 Dostupno, 1 Prodato, 2 Uklonjeno)
+  const deloStatus = (delo?.status ?? delo?.Status ?? null);
+  const statusNum =
+    typeof deloStatus === "number"
+      ? deloStatus
+      : typeof deloStatus === "string"
+      ? Number(deloStatus)
+      : null;
+
+  const isAvailableByStatus = statusNum === 0;
+  const isSoldByStatus = statusNum === 1;
+  const isRemovedByStatus = statusNum === 2;
+
+  const isSoldBool =
+    (delo?.isSold ?? delo?.IsSold ?? delo?.prodato ?? delo?.Prodato) === true;
+  const isReservedBool =
+    (delo?.isReserved ??
+      delo?.IsReserved ??
+      delo?.rezervisano ??
+      delo?.Rezervisano) === true;
+  const isAvailableBool =
+    (delo?.isAvailable ??
+      delo?.IsAvailable ??
+      delo?.dostupno ??
+      delo?.Dostupno) === true;
+
+  const canBuy =
+    !isAukcija &&
+    (isAvailableBool || isAvailableByStatus) &&
+    !(isSoldBool || isSoldByStatus) &&
+    !isRemovedByStatus &&
+    !isReservedBool;
+
   const statusLabel = (d) => {
     if (!d) return { text: "—", tone: "muted" };
 
     const onAuction = d.naAukciji ?? d.NaAukciji;
     if (onAuction) return { text: "Na aukciji", tone: "info" };
 
-    const isSold = d.isSold ?? d.IsSold ?? d.prodato ?? d.Prodato;
-    const isReserved = d.isReserved ?? d.IsReserved ?? d.rezervisano ?? d.Rezervisano;
-    const isAvailable = d.isAvailable ?? d.IsAvailable ?? d.dostupno ?? d.Dostupno;
+    const st = d.status ?? d.Status;
+    const stNum =
+      typeof st === "number" ? st : typeof st === "string" ? Number(st) : null;
 
-    if (isSold) return { text: "Prodato", tone: "danger" };
-    if (isReserved) return { text: "Rezervisano", tone: "warn" };
-    if (isAvailable) return { text: "Dostupno", tone: "ok" };
+    if (stNum === 1) return { text: "Prodato", tone: "danger" };
+    if (stNum === 2) return { text: "Uklonjeno", tone: "muted" };
+    if (stNum === 0) return { text: "Dostupno", tone: "ok" };
+
+    if (d.isSold ?? d.IsSold ?? d.prodato ?? d.Prodato)
+      return { text: "Prodato", tone: "danger" };
+    if (d.isAvailable ?? d.IsAvailable ?? d.dostupno ?? d.Dostupno)
+      return { text: "Dostupno", tone: "ok" };
 
     return { text: "—", tone: "muted" };
   };
 
-  const topBid = useMemo(() => {
-    if (!ponude?.length) return null;
-    const sorted = [...ponude].sort(
-      (a, b) => Number(b.iznos ?? b.Iznos ?? 0) - Number(a.iznos ?? a.Iznos ?? 0)
+  const buyerLocked = !authToken || !isKupac;
+
+  // ✅ helper: ime licitanta (KupacIme iz backend-a)
+  const getBidderName = (bid) => {
+    if (!bid) return "Korisnik";
+
+    const direct =
+      bid.kupacIme ||
+      bid.KupacIme ||
+      bid.korisnikIme ||
+      bid.KorisnikIme ||
+      bid.imeIPrezime ||
+      bid.ImeIPrezime;
+
+    if (direct && String(direct).trim()) return String(direct).trim();
+
+    const k = bid.korisnik || bid.Korisnik;
+    const nested =
+      k?.imeIPrezime ||
+      k?.ImeIPrezime ||
+      `${k?.ime || k?.Ime || ""} ${k?.prezime || k?.Prezime || ""}`.trim() ||
+      k?.userName ||
+      k?.UserName ||
+      k?.email ||
+      k?.Email;
+
+    return nested && String(nested).trim() ? String(nested).trim() : "Korisnik";
+  };
+
+  // sortirane ponude
+  const sortedBids = useMemo(() => {
+    const list = Array.isArray(ponude) ? [...ponude] : [];
+    list.sort(
+      (a, b) =>
+        Number(b.iznos ?? b.Iznos ?? 0) - Number(a.iznos ?? a.Iznos ?? 0)
     );
-    const first = sorted[0];
-    const val = Number(first?.iznos ?? first?.Iznos ?? 0);
-    return Number.isFinite(val) && val > 0 ? val : null;
+    return list;
   }, [ponude]);
+
+  const topBidRow = sortedBids[0] ?? null;
+  const restBids = sortedBids.slice(1);
+
+  const topBid = useMemo(() => {
+    const val = Number(topBidRow?.iznos ?? topBidRow?.Iznos ?? 0);
+    return Number.isFinite(val) && val > 0 ? val : null;
+  }, [topBidRow]);
+
+  // vreme kraja aukcije + istek
+  const auctionEndsAt = useMemo(() => {
+    const v = delo?.aukcijaZavrsava || delo?.AukcijaZavrsava;
+    const d = v ? new Date(v) : null;
+    return d && !Number.isNaN(d.getTime()) ? d : null;
+  }, [delo]);
+
+  const isAuctionEnded = useMemo(() => {
+    if (!isAukcija || !auctionEndsAt) return false;
+    return Date.now() >= auctionEndsAt.getTime();
+  }, [isAukcija, auctionEndsAt]);
 
   // ===== API calls =====
   const loadPonude = useCallback(async (umetnickoDeloId) => {
     try {
       const p = await axiosInstance.get(`Aukcija/Ponude/${umetnickoDeloId}`);
       const list = Array.isArray(p.data) ? p.data : [];
-      list.sort((a, b) => Number(b.iznos ?? b.Iznos ?? 0) - Number(a.iznos ?? a.Iznos ?? 0));
+      list.sort(
+        (a, b) =>
+          Number(b.iznos ?? b.Iznos ?? 0) - Number(a.iznos ?? a.Iznos ?? 0)
+      );
       setPonude(list);
     } catch {
-      // ignore (ne spamuj)
+      // ignore
     }
   }, []);
 
+  // ⚠️ koristi umetnickoDeloId (isti kao u Ponude)
   const loadDeloLight = useCallback(async (artworkId) => {
     try {
-      const res = await axiosInstance.get(`UmetnickoDelo/DeloPoID/${artworkId}`);
+      const res = await axiosInstance.get(
+        `UmetnickoDelo/DeloPoID/${artworkId}`
+      );
       const data = res.data;
       setDelo((prev) => ({ ...prev, ...data }));
     } catch {
@@ -136,28 +245,80 @@ export default function ArtworkDetails() {
     }
   }, []);
 
+  // recenzije
+  const loadReviews = useCallback(
+    async (umetnickoDeloId) => {
+      try {
+        setReviewsLoading(true);
+        setReviewErr("");
+
+        const r = await axiosInstance.get(
+          `Recenzija/RecenzijaZaUmetnickoDelo/${umetnickoDeloId}`
+        );
+        const list = Array.isArray(r.data) ? r.data : [];
+        setReviews(list);
+
+        const mine =
+          list.find(
+            (x) => String(x.korisnikId ?? x.KorisnikId) === String(userId)
+          ) || null;
+
+        setMyReview(mine);
+
+        if (mine) {
+          setReviewText(mine.komentar ?? mine.Komentar ?? "");
+          setReviewRating(Number(mine.ocena ?? mine.Ocena ?? 5));
+        } else {
+          setReviewText("");
+          setReviewRating(5);
+        }
+      } catch {
+        setReviewErr("Ne mogu da učitam recenzije.");
+      } finally {
+        setReviewsLoading(false);
+      }
+    },
+    [userId]
+  );
+
+  // BUY: pravi porudžbinu (1 porudžbina = 1 delo)
   const handleBuy = async () => {
     if (!authToken || !isKupac) return;
+    if (!canBuy) return;
+
     try {
       setBuying(true);
 
-      await axiosInstance.post("Porudzbine/DodajStavku", {
+      await axiosInstance.post("Porudzbina/KreiraNovuPorudzbinu", {
         umetnickoDeloId: delo.umetnickoDeloId,
-        kolicina: 1,
       });
 
-      alert("Delo je dodato u tvoje porudžbine ✅");
-      // navigate("/moje-porudzbine");
+      navigate("/moje-porudzbine");
     } catch (e) {
       const status = e?.response?.status;
-      alert(status === 403 ? "Samo Kupac može da kupi delo." : "Greška: nije moguće dodati u porudžbine.");
+      const msg = e?.response?.data?.poruka || e?.response?.data?.Poruka || "";
+
+      if (status === 400 && msg.toLowerCase().includes("već postoji")) {
+        navigate("/moje-porudzbine");
+        return;
+      }
+
+      alert(
+        status === 403
+          ? "Samo Kupac može da kupi delo."
+          : "Greška: kupovina nije uspela."
+      );
     } finally {
       setBuying(false);
     }
   };
 
   const handlePlaceBid = async () => {
-    if (!authToken || !isKupac) return;
+    if (buyerLocked) return;
+    if (isAuctionEnded) {
+      setPonudaErr("Aukcija je završena.");
+      return;
+    }
 
     setPonudaErr("");
 
@@ -167,7 +328,9 @@ export default function ArtworkDetails() {
       return;
     }
 
-    const current = Number(delo?.trenutnaCenaAukcije ?? delo?.TrenutnaCenaAukcije ?? 0);
+    const current = Number(
+      delo?.trenutnaCenaAukcije ?? delo?.TrenutnaCenaAukcije ?? 0
+    );
     const mustBeat = Math.max(current, topBid ?? 0);
 
     if (n <= mustBeat) {
@@ -189,7 +352,10 @@ export default function ArtworkDetails() {
         ? newBid
         : [{ ...newBid, iznos: newBid?.iznos ?? newBid?.Iznos ?? n }, ...ponude];
 
-      next.sort((a, b) => Number(b.iznos ?? b.Iznos ?? 0) - Number(a.iznos ?? a.Iznos ?? 0));
+      next.sort(
+        (a, b) =>
+          Number(b.iznos ?? b.Iznos ?? 0) - Number(a.iznos ?? a.Iznos ?? 0)
+      );
       setPonude(next);
 
       setDelo((prev) => ({
@@ -200,9 +366,80 @@ export default function ArtworkDetails() {
       setPonudaIznos("");
     } catch (e) {
       const status = e?.response?.status;
-      setPonudaErr(status === 403 ? "Samo Kupac može da postavi ponudu." : "Greška: ponuda nije poslata.");
+      setPonudaErr(
+        status === 403
+          ? "Samo Kupac može da postavi ponudu."
+          : "Greška: ponuda nije poslata."
+      );
     } finally {
       setPonudaSending(false);
+    }
+  };
+
+  // recenzija save/update
+  const handleSaveReview = async () => {
+    if (buyerLocked) return;
+
+    const text = String(reviewText || "").trim();
+    if (!text) {
+      setReviewErr("Unesi komentar.");
+      return;
+    }
+
+    const rating = Number(reviewRating);
+    if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
+      setReviewErr("Ocena mora biti 1–5.");
+      return;
+    }
+
+    try {
+      setReviewSaving(true);
+      setReviewErr("");
+
+      if (!myReview) {
+        await axiosInstance.post("Recenzija/KreiranjeRecenzije", {
+          umetnickoDeloId: delo.umetnickoDeloId,
+          komentar: text,
+          ocena: rating,
+        });
+      } else {
+        const rid = myReview.recenzijaId ?? myReview.RecenzijaId;
+        await axiosInstance.put(`Recenzija/AzuriranjeRecenzijePoID/${rid}`, {
+          recenzijaId: rid,
+          umetnickoDeloId: delo.umetnickoDeloId,
+          komentar: text,
+          ocena: rating,
+        });
+      }
+
+      await loadReviews(delo.umetnickoDeloId);
+    } catch (e) {
+      const s = e?.response?.status;
+      setReviewErr(
+        s === 403
+          ? "Samo Kupac može da ostavi recenziju."
+          : "Greška pri čuvanju recenzije."
+      );
+    } finally {
+      setReviewSaving(false);
+    }
+  };
+
+  // recenzija delete
+  const handleDeleteReview = async () => {
+    if (!myReview) return;
+    try {
+      setReviewSaving(true);
+      setReviewErr("");
+
+      const rid = myReview.recenzijaId ?? myReview.RecenzijaId;
+      await axiosInstance.delete(`Recenzija/BrisanjeRecenzije/${rid}`);
+
+      await loadReviews(delo.umetnickoDeloId);
+    } catch {
+      setReviewErr("Greška pri brisanju recenzije.");
+    } finally {
+      setReviewSaving(false);
     }
   };
 
@@ -229,17 +466,23 @@ export default function ArtworkDetails() {
           setUmetnik(embeddedArtist);
         } else {
           const umetnikId =
-            data?.umetnikId || data?.UmetnikId || data?.umetnikID || data?.UmetnikID;
+            data?.umetnikId ||
+            data?.UmetnikId ||
+            data?.umetnikID ||
+            data?.UmetnikID;
 
           if (umetnikId) {
-            const a = await axiosInstance.get(`Umetnik/VracaUmetnikaPoID/${umetnikId}`);
+            const a = await axiosInstance.get(
+              `Umetnik/VracaUmetnikaPoID/${umetnikId}`
+            );
             if (!cancelled) setUmetnik(a.data);
           } else {
             setUmetnik(null);
           }
         }
 
-        // aukcija: prvi load ponuda
+        await loadReviews(data.umetnickoDeloId);
+
         if ((data?.naAukciji ?? data?.NaAukciji) === true) {
           setPonudeLoading(true);
           setPonudaErr("");
@@ -270,7 +513,7 @@ export default function ArtworkDetails() {
     return () => {
       cancelled = true;
     };
-  }, [id, apiOrigin, loadPonude]);
+  }, [id, apiOrigin, loadPonude, loadReviews]);
 
   // ===== AUTO REFRESH aukcije (polling) =====
   useEffect(() => {
@@ -284,14 +527,82 @@ export default function ArtworkDetails() {
     const artworkId = delo.umetnickoDeloId;
     const interval = setInterval(async () => {
       await loadPonude(artworkId);
-      await loadDeloLight(id);
+      // ✅ FIX: osveži delo istim id-em (umetnickoDeloId)
+      await loadDeloLight(artworkId);
     }, 3000);
 
     return () => {
       clearInterval(interval);
       setPollingActive(false);
     };
-  }, [isAukcija, delo?.umetnickoDeloId, id, loadPonude, loadDeloLight]);
+  }, [isAukcija, delo?.umetnickoDeloId, loadPonude, loadDeloLight]);
+
+  // ===== Finalize aukcije (frontend fallback) =====
+  useEffect(() => {
+    if (!isAukcija || !delo?.umetnickoDeloId) return;
+    if (!isAuctionEnded) return;
+    if (finalizing) return;
+
+    let cancelled = false;
+
+    const finalize = async () => {
+      try {
+        setFinalizing(true);
+        setFinalizeErr("");
+
+        await axiosInstance.post("Aukcija/Finalize", {
+          umetnickoDeloId: delo.umetnickoDeloId,
+        });
+
+        // refresh
+        await loadDeloLight(delo.umetnickoDeloId);
+        await loadPonude(delo.umetnickoDeloId);
+
+        // winner? (backend može kasnije da doda pobednikId u delo, ali ovde imamo i topBidRow)
+        const winnerId =
+          delo?.pobednikKorisnikId ||
+          delo?.PobednikKorisnikId ||
+          topBidRow?.kupacId ||
+          topBidRow?.KupacId ||
+          topBidRow?.korisnikId ||
+          topBidRow?.KorisnikId;
+
+        if (
+          !cancelled &&
+          authToken &&
+          isKupac &&
+          winnerId &&
+          String(winnerId) === String(userId)
+        ) {
+          navigate("/moje-porudzbine");
+        }
+      } catch (e) {
+        if (!cancelled)
+          setFinalizeErr("Ne mogu da finalizujem aukciju (probaj osvežavanje).");
+      } finally {
+        if (!cancelled) setFinalizing(false);
+      }
+    };
+
+    finalize();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    isAukcija,
+    isAuctionEnded,
+    delo?.umetnickoDeloId,
+    authToken,
+    isKupac,
+    userId,
+    navigate,
+    loadDeloLight,
+    loadPonude,
+    topBidRow,
+    finalizing,
+    delo,
+  ]);
 
   // ===== Guards =====
   if (isLoading || loading) {
@@ -327,10 +638,12 @@ export default function ArtworkDetails() {
   const badge = statusLabel(delo);
 
   const pricePrimary = isAukcija
-    ? formatEur(delo.trenutnaCenaAukcije ?? delo.TrenutnaCenaAukcije ?? delo.pocetnaCenaAukcije)
+    ? formatEur(
+        delo.trenutnaCenaAukcije ??
+          delo.TrenutnaCenaAukcije ??
+          delo.pocetnaCenaAukcije
+      )
     : formatEur(delo.cena ?? delo.Cena);
-
-  const buyerLocked = !authToken || !isKupac;
 
   return (
     <section className="af-page">
@@ -407,10 +720,16 @@ export default function ArtworkDetails() {
                     className="af-btn af-btnPrimary"
                     type="button"
                     onClick={handleBuy}
-                    disabled={buyerLocked || buying}
-                    title={buyerLocked ? "Prijavi se kao Kupac da kupiš delo." : ""}
+                    disabled={buyerLocked || buying || !canBuy}
+                    title={
+                      buyerLocked
+                        ? "Prijavi se kao Kupac da kupiš delo."
+                        : !canBuy
+                        ? "Delo nije dostupno za kupovinu."
+                        : ""
+                    }
                   >
-                    {buying ? "Dodajem…" : "Kupi delo"}
+                    {buying ? "Kreiram…" : "Kupi delo"}
                   </button>
                 </div>
               )}
@@ -421,9 +740,17 @@ export default function ArtworkDetails() {
                 </div>
               )}
 
-              {isAukcija && (
+              {isAukcija && !isAuctionEnded && (
                 <div className="af-inlineNote">Kupovina nije dostupna dok je aukcija aktivna.</div>
               )}
+
+              {isAukcija && isAuctionEnded && (
+                <div className="af-inlineNote">
+                  Aukcija je završena. {finalizing ? "Finalizujem…" : "Čeka se porudžbina pobedniku."}
+                </div>
+              )}
+
+              {finalizeErr && <div className="af-inlineError">{finalizeErr}</div>}
             </div>
 
             <div className="af-specs">
@@ -461,15 +788,27 @@ export default function ArtworkDetails() {
                     onChange={(e) => setPonudaIznos(e.target.value)}
                     placeholder="Unesi svoju ponudu (npr. 120)"
                     inputMode="decimal"
-                    disabled={buyerLocked}
-                    title={buyerLocked ? "Prijavi se kao Kupac da licitiraš." : ""}
+                    disabled={buyerLocked || isAuctionEnded}
+                    title={
+                      buyerLocked
+                        ? "Prijavi se kao Kupac da licitiraš."
+                        : isAuctionEnded
+                        ? "Aukcija je završena."
+                        : ""
+                    }
                   />
                   <button
                     className="af-btn af-btnPrimary"
                     type="button"
                     onClick={handlePlaceBid}
-                    disabled={buyerLocked || ponudaSending}
-                    title={buyerLocked ? "Prijavi se kao Kupac da licitiraš." : ""}
+                    disabled={buyerLocked || ponudaSending || isAuctionEnded}
+                    title={
+                      buyerLocked
+                        ? "Prijavi se kao Kupac da licitiraš."
+                        : isAuctionEnded
+                        ? "Aukcija je završena."
+                        : ""
+                    }
                   >
                     {ponudaSending ? "Šaljem…" : "Postavi ponudu"}
                   </button>
@@ -482,57 +821,53 @@ export default function ArtworkDetails() {
 
                   {ponudeLoading ? (
                     <div className="af-mutedLine">Učitavam ponude…</div>
-                  ) : ponude?.length ? (
+                  ) : !sortedBids.length ? (
+                    <div className="af-mutedLine">Još nema ponuda.</div>
+                  ) : (
                     <div className="af-bids">
-                    {topBidRow ? (
                       <div className="af-bidRow af-bidRowTop">
                         <div className="af-bidLeft">
                           <span className="af-rank">#1</span>
-                          <span className="af-who">
-                            {topBidRow?.korisnikIme || topBidRow?.KorisnikIme || topBidRow?.imeIPrezime || topBidRow?.ImeIPrezime || "Korisnik"}
-                          </span>
+                          <span className="af-who">{getBidderName(topBidRow)}</span>
                         </div>
                         <strong className="af-bidAmount">
                           {formatEur(Number(topBidRow?.iznos ?? topBidRow?.Iznos ?? 0))}
                         </strong>
                       </div>
-                    ) : (
-                      <div className="af-mutedLine">Još nema ponuda.</div>
-                    )}
 
-                    {restBids.length > 0 && (
-                      <button
-                        type="button"
-                        className="af-btn af-btnGhost af-btnSmall"
-                        onClick={() => setShowAllBids((s) => !s)}
-                      >
-                        {showAllBids ? "Sakrij ostale ponude" : `Prikaži ostale ponude (${restBids.length})`}
-                      </button>
-                    )}
+                      {restBids.length > 0 && (
+                        <button
+                          type="button"
+                          className="af-btn af-btnGhost af-btnSmall"
+                          onClick={() => setShowAllBids((s) => !s)}
+                        >
+                          {showAllBids
+                            ? "Sakrij ostale ponude"
+                            : `Prikaži ostale ponude (${restBids.length})`}
+                        </button>
+                      )}
 
-                    {showAllBids && restBids.length > 0 && (
-                      <div className="af-bidsRest">
-                        {restBids.map((p, idx) => {
-                          const iznos = Number(p.iznos ?? p.Iznos ?? 0);
-                          const who =
-                            p?.korisnikIme || p?.KorisnikIme || p?.imeIPrezime || p?.ImeIPrezime || "Korisnik";
+                      {showAllBids && restBids.length > 0 && (
+                        <div className="af-bidsRest">
+                          {restBids.map((p, idx) => {
+                            const iznos = Number(p.iznos ?? p.Iznos ?? 0);
 
-                          return (
-                            <div key={p?.ponudaId ?? p?.PonudaId ?? `${idx}-${iznos}`} className="af-bidRow">
-                              <div className="af-bidLeft">
-                                <span className="af-rank">#{idx + 2}</span>
-                                <span className="af-who">{who}</span>
+                            return (
+                              <div
+                                key={p?.ponudaId ?? p?.PonudaId ?? p?.aukcijskaPonudaId ?? `${idx}-${iznos}`}
+                                className="af-bidRow"
+                              >
+                                <div className="af-bidLeft">
+                                  <span className="af-rank">#{idx + 2}</span>
+                                  <span className="af-who">{getBidderName(p)}</span>
+                                </div>
+                                <strong className="af-bidAmount">{formatEur(iznos)}</strong>
                               </div>
-                              <strong className="af-bidAmount">{formatEur(iznos)}</strong>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-
-                  ) : (
-                    <div className="af-mutedLine">Još nema ponuda.</div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
@@ -545,6 +880,105 @@ export default function ArtworkDetails() {
               </div>
             )}
           </aside>
+        </div>
+
+        {/* RECENZIJE */}
+        <div className="af-reviewsCard">
+          <div className="af-reviewsHead">
+            <h2 className="af-reviewsTitle">Recenzije</h2>
+          </div>
+
+          {reviewsLoading ? (
+            <div className="af-mutedLine">Učitavam recenzije…</div>
+          ) : reviewErr ? (
+            <div className="af-inlineError">{reviewErr}</div>
+          ) : null}
+
+          {authToken && isKupac ? (
+            <div className="af-reviewForm">
+              <div className="af-formRow">
+                <label className="af-label">Ocena</label>
+                <select
+                  className="af-input"
+                  value={reviewRating}
+                  onChange={(e) => setReviewRating(e.target.value)}
+                  disabled={reviewSaving}
+                >
+                  {[5, 4, 3, 2, 1].map((n) => (
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="af-formRow">
+                <label className="af-label">Komentar</label>
+                <textarea
+                  className="af-textarea"
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                  placeholder="Ostavi utisak o delu…"
+                  disabled={reviewSaving}
+                  rows={4}
+                />
+              </div>
+
+              <div className="af-formActions">
+                <button
+                  className="af-btn af-btnPrimary"
+                  type="button"
+                  onClick={handleSaveReview}
+                  disabled={reviewSaving}
+                >
+                  {reviewSaving ? "Čuvam…" : myReview ? "Ažuriraj recenziju" : "Objavi recenziju"}
+                </button>
+
+                {myReview && (
+                  <button
+                    className="af-btn af-btnGhost"
+                    type="button"
+                    onClick={handleDeleteReview}
+                    disabled={reviewSaving}
+                  >
+                    Obriši svoju recenziju
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="af-inlineNote">
+              Prijavi se kao <strong>Kupac</strong> da bi ostavio recenziju.
+            </div>
+          )}
+
+          <div className="af-reviewsList">
+            {reviews?.length ? (
+              reviews.map((r, i) => {
+                const rid = r.recenzijaId ?? r.RecenzijaId ?? i;
+                const rating = Number(r.ocena ?? r.Ocena ?? 0);
+                const text = r.komentar ?? r.Komentar ?? "";
+                const who =
+                  r.korisnikIme ||
+                  r.KorisnikIme ||
+                  r.korisnik?.imeIPrezime ||
+                  r.Korisnik?.ImeIPrezime ||
+                  "Kupac";
+
+                return (
+                  <div key={rid} className="af-reviewItem">
+                    <div className="af-reviewTop">
+                      <div className="af-reviewWho">{who}</div>
+                      <div className="af-reviewRating">★ {rating}/5</div>
+                    </div>
+                    <div className="af-reviewText">{text}</div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="af-mutedLine">Još nema recenzija.</div>
+            )}
+          </div>
         </div>
       </div>
     </section>

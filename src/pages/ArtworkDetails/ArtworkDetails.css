@@ -10,10 +10,8 @@
 .af-page{
   min-height: 100vh;
   background:
-    radial-gradient(900px 500px at 20% 10%, var(--af-glow), transparent 60%),
-    radial-gradient(700px 450px at 85% 15%, rgba(255, 196, 240, .12), transparent 55%),
-    radial-gradient(800px 600px at 55% 95%, rgba(170, 255, 220, .10), transparent 60%),
-    var(--af-bg);
+     radial-gradient(900px 420px at 20% 10%, rgba(91,92,255,.18), transparent 55%),
+    linear-gradient(180deg, var(--bg2), var(--bg));
   color: var(--af-text);
   padding: 28px 16px 48px;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
@@ -294,4 +292,241 @@
   margin-top: 10px;
   display: grid;
   gap: 8px;
+}
+
+/* ===============================
+   ARTIFY PREMIUM REVIEWS
+   Dark gallery glass + gold accent
+   =============================== */
+
+:root {
+  --af-bg-dark: #0e1017;
+  --af-glass: rgba(255, 255, 255, 0.06);
+  --af-border: rgba(255, 255, 255, 0.12);
+
+  --af-gold: #e6c87a;
+  --af-gold-soft: rgba(230, 200, 122, 0.35);
+
+  --af-text-main: rgba(255, 255, 255, 0.92);
+  --af-text-muted: rgba(255, 255, 255, 0.62);
+}
+
+/* Card */
+.af-reviewsCard {
+  margin-top: 28px;
+  padding: 20px;
+  border-radius: 20px;
+
+  background:
+    linear-gradient(180deg, rgba(18, 20, 30, 0.85), rgba(12, 14, 22, 0.85)),
+    radial-gradient(circle at top right, rgba(230, 200, 122, 0.08), transparent 40%);
+  backdrop-filter: blur(18px);
+
+  border: 1px solid var(--af-border);
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  color: var(--af-text-main);
+}
+
+/* Header */
+.af-reviewsHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+
+  border-bottom: 1px solid var(--af-border);
+}
+
+.af-reviewsTitle {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: 0.4px;
+  font-weight: 600;
+}
+
+/* gold accent */
+.af-reviewsHead::after {
+  content: "";
+  width: 90px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--af-gold), transparent);
+  opacity: 0.9;
+}
+
+/* ================= FORM ================= */
+
+.af-reviewForm {
+  padding: 16px;
+  border-radius: 16px;
+  margin-bottom: 18px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.03)
+  );
+  border: 1px solid var(--af-border);
+}
+
+.af-formRow {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.af-label {
+  font-size: 13px;
+  color: var(--af-text-muted);
+  padding-top: 8px;
+}
+
+.af-textarea {
+  width: 100%;
+  min-height: 100px;
+  resize: vertical;
+
+  border-radius: 14px;
+  padding: 12px 14px;
+
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--af-border);
+  color: var(--af-text-main);
+
+  outline: none;
+  font: inherit;
+  line-height: 1.4;
+
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.af-textarea::placeholder {
+  color: var(--af-text-muted);
+}
+
+.af-textarea:focus {
+  border-color: var(--af-gold-soft);
+  box-shadow: 0 0 0 4px rgba(230, 200, 122, 0.12);
+}
+
+.af-formActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* ================= LIST ================= */
+
+.af-reviewsList {
+  display: grid;
+  gap: 12px;
+}
+
+.af-reviewItem {
+  padding: 16px;
+  border-radius: 16px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.03)
+  );
+  border: 1px solid var(--af-border);
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.af-reviewItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
+}
+
+/* Top row */
+.af-reviewTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.af-reviewWho {
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.af-reviewRating {
+  padding: 6px 12px;
+  border-radius: 999px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(230, 200, 122, 0.25),
+    rgba(230, 200, 122, 0.15)
+  );
+  border: 1px solid rgba(230, 200, 122, 0.35);
+
+  color: var(--af-gold);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+/* Text */
+.af-reviewText {
+  line-height: 1.45;
+  color: var(--af-text-main);
+}
+
+/* ================= STATES ================= */
+
+.af-inlineNote {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--af-border);
+
+  color: var(--af-text-muted);
+  font-size: 14px;
+}
+
+.af-inlineError {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+
+  background: rgba(255, 60, 60, 0.12);
+  border: 1px solid rgba(255, 60, 60, 0.35);
+
+  color: #ffb4b4;
+  font-size: 14px;
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 720px) {
+  .af-reviewsCard {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .af-formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .af-label {
+    padding-top: 0;
+  }
+
+  .af-reviewTop {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

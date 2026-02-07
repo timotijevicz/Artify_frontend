@@ -2,6 +2,10 @@
 
 .favorites-page {
   padding-bottom: 32px;
+  background:  radial-gradient(900px 420px at 20% 10%, rgba(91,92,255,.18), transparent 55%),
+    linear-gradient(180deg, var(--bg2), var(--bg));;
+  background-color:radial-gradient(900px 420px at 20% 10%, rgba(91,92,255,.18), transparent 55%),
+    linear-gradient(180deg, var(--bg2), var(--bg));; ;
 }
 
 /* HERO */
@@ -105,6 +109,8 @@
 
 /* CONTENT */
 .favorites-section {
+  background:  radial-gradient(900px 420px at 20% 10%, rgba(91,92,255,.18), transparent 55%),
+    linear-gradient(180deg, var(--bg2), var(--bg));;
   margin-top: 14px;
 }
 

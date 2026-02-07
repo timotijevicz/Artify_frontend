@@ -23,15 +23,16 @@ function AppProvider({ children }) {
           const decoded = jwtDecode(authToken);
           setUser(decoded);
 
-          const role =
-            decoded[
-              "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-            ];
+          const role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+
+          // ✅ MINIMALNO: role može biti string ili niz
+          const roles = Array.isArray(role) ? role : role ? [role] : [];
 
           // ✅ tvoje role
-          setIsAdmin(role === "Admin");
-          setIsUmetnik(role === "Umetnik");
-          setIsKupac(role === "Kupac");
+          setIsAdmin(roles.includes("Admin"));
+          setIsUmetnik(roles.includes("Umetnik"));
+          setIsKupac(roles.includes("Kupac"));
+
 
           const id =
             decoded[
