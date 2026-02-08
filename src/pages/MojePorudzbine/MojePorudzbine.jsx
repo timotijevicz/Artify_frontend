@@ -10,7 +10,10 @@ export default function MojePorudzbine() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
+
   const [payingId, setPayingId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
+  const [archivingId, setArchivingId] = useState(null);
 
   // ✅ tvoja backend ruta:
   const ENDPOINT_GET = "Porudzbina/MojePorudzbine";
@@ -27,7 +30,15 @@ export default function MojePorudzbine() {
 
       const r = await axiosInstance.get(ENDPOINT_GET);
       const list = Array.isArray(r.data) ? r.data : [];
-      setItems(list);
+
+      // ✅ FRONTEND "arhiva" filter: sakrij arhivirane ako backend vraća polje
+      // podržava: arhivirana/Arhivirana/isArchived/IsArchived
+      const filtered = list.filter((p) => {
+        const a = p.arhivirana ?? p.Arhivirana ?? p.isArchived ?? p.IsArchived ?? false;
+        return !Boolean(a);
+      });
+
+      setItems(filtered);
     } catch (e) {
       console.log("MOJE PORUDZBINE ERROR:", {
         url: e?.config?.url,
@@ -71,9 +82,9 @@ export default function MojePorudzbine() {
       setPayingId(porudzbinaId);
       setErr("");
 
+      // ⚠️ trenutno tvoj endpoint koji markira kao Placena
       await axiosInstance.put(`Porudzbina/Plati/${porudzbinaId}`);
 
-      // refresuj listu
       await load();
     } catch (e) {
       console.log("PAY ERROR:", {
@@ -86,6 +97,58 @@ export default function MojePorudzbine() {
       setErr(msg || "Ne mogu da izvršim plaćanje.");
     } finally {
       setPayingId(null);
+    }
+  };
+
+  const handleDelete = async (porudzbinaId) => {
+    if (!porudzbinaId) return;
+
+    const ok = window.confirm("Da li si siguran/na da želiš da odustaneš od porudžbine?");
+    if (!ok) return;
+
+    try {
+      setDeletingId(porudzbinaId);
+      setErr("");
+
+      await axiosInstance.delete(`Porudzbina/BrisanjePorudzbine/${porudzbinaId}`);
+
+      await load();
+    } catch (e) {
+      console.log("DELETE ORDER ERROR:", {
+        url: e?.config?.url,
+        status: e?.response?.status,
+        data: e?.response?.data,
+      });
+
+      const msg = e?.response?.data?.poruka || e?.response?.data?.Poruka;
+      setErr(msg || "Ne mogu da obrišem porudžbinu.");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const handleArchive = async (porudzbinaId) => {
+    if (!porudzbinaId) return;
+
+    try {
+      setArchivingId(porudzbinaId);
+      setErr("");
+
+      // ✅ treba da dodaš ovaj endpoint na backendu:
+      await axiosInstance.put(`Porudzbina/Arhiviraj/${porudzbinaId}`);
+
+      await load();
+    } catch (e) {
+      console.log("ARCHIVE ERROR:", {
+        url: e?.config?.url,
+        status: e?.response?.status,
+        data: e?.response?.data,
+      });
+
+      const msg = e?.response?.data?.poruka || e?.response?.data?.Poruka;
+      setErr(msg || "Ne mogu da arhiviram porudžbinu.");
+    } finally {
+      setArchivingId(null);
     }
   };
 
@@ -154,10 +217,10 @@ export default function MojePorudzbine() {
               const porudzbinaId = p.porudzbinaId ?? p.PorudzbinaId;
 
               const deloId =
-                p.umetnickoDeloId ??
                 p.UmetnickoDeloId ??
-                p.umetnickoDelo?.umetnickoDeloId ??
+                p.umetnickoDeloId ??
                 p.UmetnickoDelo?.UmetnickoDeloId ??
+                p.umetnickoDelo?.umetnickoDeloId ??
                 null;
 
               const naziv =
@@ -173,8 +236,11 @@ export default function MojePorudzbine() {
 
               const st = p.status ?? p.Status;
               const badge = statusLabel(st);
+              const statusNum = typeof st === "number" ? st : Number(st);
 
-              const canPay = Number(st) !== 3 && Number(st) !== 4; // nije Placena i nije Otkazana
+              const canPay = statusNum !== 3 && statusNum !== 4; // nije Placena i nije Otkazana
+              const canCancel = statusNum !== 3 && statusNum !== 4; // odustani samo dok nije završena
+              const canArchive = statusNum === 3; // arhiviranje samo kad je Placena
 
               return (
                 <div className="af-orderCard" key={porudzbinaId ?? `${deloId}-${cena}`}>
@@ -210,6 +276,27 @@ export default function MojePorudzbine() {
                     >
                       {payingId === porudzbinaId ? "Plaćam…" : "Plati"}
                     </button>
+
+                    {canArchive ? (
+                      <button
+                        className="af-btn af-btnGhost"
+                        type="button"
+                        onClick={() => handleArchive(porudzbinaId)}
+                        disabled={archivingId === porudzbinaId}
+                      >
+                        {archivingId === porudzbinaId ? "Arhiviram…" : "Arhiviraj"}
+                      </button>
+                    ) : (
+                      <button
+                        className="af-btn af-btnGhost"
+                        type="button"
+                        onClick={() => handleDelete(porudzbinaId)}
+                        disabled={!canCancel || deletingId === porudzbinaId}
+                        title={!canCancel ? "Ne možeš da odustaneš od završene porudžbine." : ""}
+                      >
+                        {deletingId === porudzbinaId ? "Brišem…" : "Odustani"}
+                      </button>
+                    )}
                   </div>
                 </div>
               );

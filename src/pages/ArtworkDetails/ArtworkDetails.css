@@ -375,6 +375,7 @@
 }
 
 .af-formRow {
+  border-color: #0b0f17;
   display: grid;
   grid-template-columns: 110px 1fr;
   gap: 12px;
@@ -518,6 +519,7 @@
   }
 
   .af-formRow {
+    color: #0e1017;
     grid-template-columns: 1fr;
   }
 
