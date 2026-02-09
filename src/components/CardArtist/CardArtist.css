@@ -122,3 +122,23 @@
 .arrow{
   opacity: .9;
 }
+
+.artist-lock{
+  position:absolute;
+  left:12px;
+  bottom:12px;
+  padding:6px 10px;
+  border-radius:999px;
+  background: rgba(0,0,0,.65);
+  color:#fff;
+  font-size:12px;
+  font-weight:700;
+  z-index:2;
+}
+
+.artist-hint{
+  margin-top:10px;
+  font-size:12px;
+  opacity:.75;
+}
+

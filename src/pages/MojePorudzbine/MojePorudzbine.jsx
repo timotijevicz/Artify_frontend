@@ -15,6 +15,10 @@ export default function MojePorudzbine() {
   const [deletingId, setDeletingId] = useState(null);
   const [archivingId, setArchivingId] = useState(null);
 
+  // ✅ Fake PayPal modal state
+  const [paypalOpen, setPaypalOpen] = useState(false);
+  const [paypalOrder, setPaypalOrder] = useState(null); // { porudzbinaId, naziv, cena }
+
   // ✅ tvoja backend ruta:
   const ENDPOINT_GET = "Porudzbina/MojePorudzbine";
 
@@ -71,16 +75,18 @@ export default function MojePorudzbine() {
     }, 0);
   }, [items]);
 
-  const handlePay = async (porudzbinaId) => {
-    if (!porudzbinaId) return;
+  // ✅ Fake "PayPal confirm" -> tvoj backend samo markira kao Placena
+  const confirmPaypal = async () => {
+    if (!paypalOrder?.porudzbinaId) return;
 
     try {
-      setPayingId(porudzbinaId);
+      setPayingId(paypalOrder.porudzbinaId);
       setErr("");
 
-      // ⚠️ trenutno tvoj endpoint koji markira kao Placena
-      await axiosInstance.put(`Porudzbina/Plati/${porudzbinaId}`);
+      await axiosInstance.put(`Porudzbina/Plati/${paypalOrder.porudzbinaId}`);
 
+      setPaypalOpen(false);
+      setPaypalOrder(null);
       await load();
     } catch (e) {
       console.log("PAY ERROR:", {
@@ -130,7 +136,6 @@ export default function MojePorudzbine() {
       setArchivingId(porudzbinaId);
       setErr("");
 
-      // ✅ treba da dodaš ovaj endpoint na backendu:
       await axiosInstance.put(`Porudzbina/Arhiviraj/${porudzbinaId}`);
 
       await load();
@@ -158,6 +163,18 @@ export default function MojePorudzbine() {
     if (n === 4) return { text: "Otkazana", tone: "muted" };
     return { text: "—", tone: "muted" };
   };
+
+  // ESC zatvara modal (lep detalj)
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setPaypalOpen(false);
+        setPaypalOrder(null);
+      }
+    };
+    if (paypalOpen) window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [paypalOpen]);
 
   if (isLoading || loading) {
     return (
@@ -266,9 +283,14 @@ export default function MojePorudzbine() {
                     <button
                       className="af-btn af-btnPrimary"
                       type="button"
-                      onClick={() => handlePay(porudzbinaId)}
                       disabled={!canPay || payingId === porudzbinaId}
                       title={!canPay ? "Porudžbina je već završena." : ""}
+                      onClick={() => {
+                        if (!porudzbinaId) return;
+                        setErr("");
+                        setPaypalOrder({ porudzbinaId, naziv, cena });
+                        setPaypalOpen(true);
+                      }}
                     >
                       {payingId === porudzbinaId ? "Plaćam…" : "Plati"}
                     </button>
@@ -302,6 +324,76 @@ export default function MojePorudzbine() {
           <div className="af-mutedLine">Nemaš porudžbine još.</div>
         )}
       </div>
+
+      {/* ✅ Fake PayPal modal */}
+      {paypalOpen && paypalOrder && (
+        <div
+          className="pp-overlay"
+          role="dialog"
+          aria-modal="true"
+          onClick={() => {
+            setPaypalOpen(false);
+            setPaypalOrder(null);
+          }}
+        >
+          <div className="pp-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="pp-head">
+              <div className="pp-logo">PayPal</div>
+              <button
+                className="pp-x"
+                onClick={() => {
+                  setPaypalOpen(false);
+                  setPaypalOrder(null);
+                }}
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="pp-body">
+              <div className="pp-row">
+                <span>Porudžbina</span>
+                <strong>{paypalOrder.naziv}</strong>
+              </div>
+              <div className="pp-row">
+                <span>Iznos</span>
+                <strong>{formatEur(paypalOrder.cena)}</strong>
+              </div>
+
+              <label className="pp-label">
+                Email
+                <input className="pp-input" placeholder="buyer@example.com" />
+              </label>
+
+              <label className="pp-label">
+                Lozinka 
+                <input className="pp-input" type="password" placeholder="••••••••" />
+              </label>
+
+              <div className="pp-actions">
+                <button
+                  className="af-btn af-btnGhost"
+                  onClick={() => {
+                    setPaypalOpen(false);
+                    setPaypalOrder(null);
+                  }}
+                >
+                  Otkaži
+                </button>
+
+                <button
+                  className="af-btn af-btnPrimary"
+                  onClick={confirmPaypal}
+                  disabled={payingId === paypalOrder.porudzbinaId}
+                >
+                  {payingId === paypalOrder.porudzbinaId ? "Processing…" : "Potvrdite plaćanje"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
