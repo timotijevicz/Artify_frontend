@@ -17,6 +17,7 @@ import DodajDelo from "./pages/ArtistPage/DodajDelo/DodajDelo";
 import IzmeniDelo from "./pages/ArtistPage/IzemeniDelo/IzmeniDelo";
 import ArtworkDetails from "./pages/ArtworkDetails/ArtworkDetails";
 import MojePorudzbine from "./pages/MojePorudzbine/MojePorudzbine";
+import ArtistProfile from "./pages/PogledajUmetnika/ArtistProfil";
 
 function App() {
   
@@ -34,6 +35,7 @@ function App() {
           <Route path="/galerija" element={<Galerija />} />
           <Route path="/umetnici" element={<Umetnici />} />
           <Route path="/favoriti" element={<Favoriti />} />
+          <Route path="/umetnici/:id" element={<ArtistProfile />} />
           <Route path="/" element={<Navigate to="/umetnik/moji-radovi" replace />} />
         <Route path="/umetnik/moji-radovi" element={<MojiRadovi />} />
         <Route path="/umetnik/dodaj-delo" element={<DodajDelo />} />

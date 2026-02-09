@@ -532,3 +532,21 @@
     align-items: flex-start;
   }
 }
+
+/* ✅ Select dropdown (options) – crn tekst kad se lista otvori */
+select.af-input {
+  color: var(--af-text);              /* tekst u zatvorenom select-u ostaje bel */
+  background: rgba(255,255,255,.06);
+}
+
+/* Ovo utiče na listu koja "iskoči" */
+select.af-input option,
+select.af-input optgroup {
+  color: #111 !important;             /* ✅ crn tekst u listi */
+  background: #fff !important;        /* ✅ bela pozadina liste */
+}
+
+/* (opciono) kada je option selektovan */
+select.af-input option:checked {
+  background: #eaeaea !important;
+}

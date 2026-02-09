@@ -27,12 +27,8 @@ export default function MojePorudzbine() {
     try {
       setLoading(true);
       setErr("");
-
       const r = await axiosInstance.get(ENDPOINT_GET);
       const list = Array.isArray(r.data) ? r.data : [];
-
-      // ✅ FRONTEND "arhiva" filter: sakrij arhivirane ako backend vraća polje
-      // podržava: arhivirana/Arhivirana/isArchived/IsArchived
       const filtered = list.filter((p) => {
         const a = p.arhivirana ?? p.Arhivirana ?? p.isArchived ?? p.IsArchived ?? false;
         return !Boolean(a);

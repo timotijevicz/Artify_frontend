@@ -161,7 +161,7 @@ export default function Navbar() {
                 <i className="fas fa-user" />
               </button>
 
-              {profileMenuOpen && (
+              {profileMenuOpen &&  (
                 <div className="profile-dropdown">
                   <Link to="/profil" onClick={() => setProfileMenuOpen(false)}>
                     Moj profil
