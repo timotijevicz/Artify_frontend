@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./Navbar.css";
 import { AppContext } from "../../context/AppContext";
+import ProfileDropdown from "./ProfileDropdown";
 
 export default function Navbar() {
   const location = useLocation();
@@ -87,11 +88,23 @@ export default function Navbar() {
             </Link>
           </li>
 
+          {isLoggedIn && (
+            <li className="nav-item">
+              <Link
+                to="/admin/notifikacije"
+                className={`nav-links ${isActive("/admin/notifikacije") ? "active" : ""}`}
+                onClick={closeMobileMenu}
+              >
+                Obaveštenja
+              </Link>
+            </li>
+          )}
+
           {isKupac && (
             <li className="nav-item">
               <Link
                 to="/moje-porudzbine"
-                className={`nav-links ${isActive("/porudzbine") ? "active" : ""}`}
+                className={`nav-links ${isActive("/moje-porudzbine") ? "active" : ""}`}
                 onClick={closeMobileMenu}
               >
                 Moje porudžbine
@@ -114,7 +127,7 @@ export default function Navbar() {
           {isAdmin && (
             <li className="nav-item">
               <Link
-                to="/admin"
+                to="/admin/panel"
                 className={`nav-links ${isActive("/admin") ? "active" : ""}`}
                 onClick={closeMobileMenu}
               >
@@ -149,7 +162,9 @@ export default function Navbar() {
               aria-label="Favoriti" >
               <i className="fas fa-heart"></i>
             </Link>
+            
           )}
+          
           {isLoggedIn ? (
             <div className="profile-section">
               <button
@@ -161,14 +176,11 @@ export default function Navbar() {
                 <i className="fas fa-user" />
               </button>
 
-              {profileMenuOpen &&  (
-                <div className="profile-dropdown">
-                  <Link to="/profil" onClick={() => setProfileMenuOpen(false)}>
-                    Moj profil
-                  </Link>
-                  <button onClick={handleLogout}>Odjava</button>
-                </div>
-              )}
+              <ProfileDropdown
+                profileMenuOpen={profileMenuOpen}
+                setProfileMenuOpen={setProfileMenuOpen}
+                handleLogout={handleLogout}
+              />
             </div>
           ) : (
             <div className="auth-buttons">

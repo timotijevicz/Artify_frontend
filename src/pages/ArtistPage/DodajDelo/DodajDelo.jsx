@@ -193,7 +193,7 @@ export default function DodajDelo() {
           <>
             <input
               name="pocetnaCenaAukcije"
-              placeholder="Početna cena"
+              placeholder="Početna cena aukcije"
               value={form.pocetnaCenaAukcije}
               onChange={onChange}
               required

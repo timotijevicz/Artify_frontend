@@ -116,9 +116,9 @@ export default function Favoriti() {
         <div className="favorites-hero-row">
           <div>
             <h1 className="favorites-title">Tvoja omiljena dela</h1>
-            <p className="favorites-subtitle">
-              Lista se učitava sa servera.
-            </p>
+            <br />
+            <p>Ovo je tvoja lična kolekcija inspiracije — mesto gde umetnost ostaje blizu.</p>
+            <p>Nova dela čekaju da postanu deo tvoje kolekcije.</p>
           </div>
           <div className="favorites-actions">
             <button

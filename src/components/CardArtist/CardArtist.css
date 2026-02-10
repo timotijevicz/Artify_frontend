@@ -31,7 +31,7 @@
 
 .artist-media{
   position: relative;
-  height: 210px;
+  height: 260px; /* ✅ povećaj (npr 240/260/280) */
   overflow: hidden;
 }
 
@@ -40,12 +40,14 @@
   height: 100%;
   object-fit: cover;
   filter: grayscale(.06) contrast(1.06);
-  transform: scale(1.02);
-  transition: transform 240ms ease, filter 240ms ease;
+
+  transform: scale(1.06);       /* ✅ malo uvećana stalno */
+  transition: filter 240ms ease; /* ✅ nema transition za transform */
 }
 
+/* ✅ ukloni hover scale na slici */
 .artist-card:hover .artist-img{
-  transform: scale(1.07);
+  transform: scale(1.06);       /* isto kao normal state */
   filter: grayscale(.03) contrast(1.08);
 }
 

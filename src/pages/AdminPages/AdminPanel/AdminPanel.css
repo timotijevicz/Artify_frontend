@@ -1,0 +1,123 @@
+.admUsers {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.admUsers__title {
+  font-size: 28px;
+  margin: 0 0 18px;
+}
+
+.admUsers__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .admUsers__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admUsers__card {
+  background: #ffffff;
+  border: 1px solid #e9e9e9;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.admUsers__top {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.admUsers__section {
+  font-size: 18px;
+  margin: 0;
+}
+
+.admUsers__search {
+  width: 55%;
+  min-width: 200px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #d7d7d7;
+  outline: none;
+}
+
+.admUsers__search:focus {
+  border-color: #b5b5b5;
+}
+
+.admUsers__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admUsers__item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid #efefef;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.admUsers__main {
+  min-width: 0;
+}
+
+.admUsers__primary {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admUsers__secondary {
+  font-size: 13px;
+  color: #555;
+  margin-top: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admUsers__mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.admUsers__btn {
+  border: none;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.admUsers__btnDanger {
+  background: #ffefef;
+  color: #a40000;
+}
+
+.admUsers__btnDanger:hover {
+  background: #ffe2e2;
+}
+
+.admUsers__btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admUsers__muted {
+  color: #666;
+  font-size: 14px;
+  padding: 8px 0;
+}

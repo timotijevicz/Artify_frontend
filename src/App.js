@@ -18,6 +18,11 @@ import IzmeniDelo from "./pages/ArtistPage/IzemeniDelo/IzmeniDelo";
 import ArtworkDetails from "./pages/ArtworkDetails/ArtworkDetails";
 import MojePorudzbine from "./pages/MojePorudzbine/MojePorudzbine";
 import ArtistProfile from "./pages/PogledajUmetnika/ArtistProfil";
+import KupacProfil from "./pages/Profili/Kupac/KupacProfil";
+import UmetnikProfil from './pages/Profili/Umetnik/UmetnikProfil';
+import AdminProfil from './pages/Profili/Admin/AdminProfil';
+import AdminPanel from './pages/AdminPages/AdminPanel/AdminPanel';
+import AdminNotifikacije from './pages/AdminPages/Notifikacije/Notifikacije'
 
 function App() {
   
@@ -43,7 +48,11 @@ function App() {
         <Route path="/artwork/:id" element={<ArtworkDetails />} />
         <Route path="/moje-porudzbine" element={<MojePorudzbine />} />
         <Route path="/delo/:id" element={<ArtworkDetails />} />
-
+        <Route path="/kupac/profil" element={<KupacProfil />} />
+        <Route path="/umetnik/profil" element={<UmetnikProfil />} />
+        <Route path="/admin/profil" element={<AdminProfil />} />
+        <Route path="/admin/panel" element={<AdminPanel />} />
+        <Route path="/admin/notifikacije" element={<AdminNotifikacije />} />
         </Routes>
         <Footer />
       </Router>
