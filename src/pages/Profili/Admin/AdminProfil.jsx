@@ -25,9 +25,9 @@ export default function AdminProfil() {
   });
   const [savingEmail, setSavingEmail] = useState(false);
 
-  // ✅ koristi se u delete formi
-  // const [deletePass, setDeletePass] = useState("");
-  // const [deleting, setDeleting] = useState(false);
+  // ✅ FIX: ovo mora da postoji jer ga koristiš u submitDeleteMy i u formi
+  const [deletePass, setDeletePass] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   const fetchMyProfile = async () => {
     setLoadingMy(true);
@@ -51,7 +51,8 @@ export default function AdminProfil() {
   }, [isLoading]);
 
   if (isLoading) return <div className="adminProfil">Učitavanje...</div>;
-  if (!isAdmin) return <div className="adminProfil">Nemaš pristup ovoj stranici.</div>;
+  if (!isAdmin)
+    return <div className="adminProfil">Nemaš pristup ovoj stranici.</div>;
 
   const onChangePass = (e) => {
     const { name, value } = e.target;
@@ -123,10 +124,15 @@ export default function AdminProfil() {
     }
   };
 
-  // ✅ sada se koristi (forma ispod)
   const submitDeleteMy = async (e) => {
     e.preventDefault();
     if (deleting) return;
+
+    const pass = String(deletePass || "").trim();
+    if (!pass) {
+      alert("Unesi lozinku za potvrdu brisanja.");
+      return;
+    }
 
     const ok = window.confirm("Da li si siguran? Brisanje naloga je trajno.");
     if (!ok) return;
@@ -134,7 +140,7 @@ export default function AdminProfil() {
     setDeleting(true);
     try {
       await axiosInstance.delete("Korisnik/BrisanjeMogNaloga", {
-        data: { lozinka: deletePass },
+        data: { lozinka: pass },
       });
 
       logout();
