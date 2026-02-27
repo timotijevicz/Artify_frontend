@@ -30,7 +30,6 @@ function App() {
     <div className="App">
       <Router>
         <Navbar />
-        {/* Definišemo rute */}
         <Routes>
           <Route path="/about" element={<About />} />
           <Route path="/login" element={<Login />} />
@@ -41,7 +40,7 @@ function App() {
           <Route path="/umetnici" element={<Umetnici />} />
           <Route path="/favoriti" element={<Favoriti />} />
           <Route path="/umetnici/:id" element={<ArtistProfile />} />
-          <Route path="/" element={<Navigate to="/umetnik/moji-radovi" replace />} />
+          <Route path="*" element={<Navigate to="/home" replace />} />
         <Route path="/umetnik/moji-radovi" element={<MojiRadovi />} />
         <Route path="/umetnik/dodaj-delo" element={<DodajDelo />} />
         <Route path="/umetnik/izmeni-delo/:id" element={<IzmeniDelo />} />
@@ -58,11 +57,6 @@ function App() {
       </Router>
     </div>
   );
-
-
-  
 }
-
-
 
 export default App;
