@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from './components/Navigation/Navbar';
 import Footer from './components/Footer/Footer';
-import About from './pages/About/About';
+import About from './pages/about/About';
 import Login from './pages/Login/Login';
 import RegisterUser from './pages/Register/RegisterUser';
 import RegisterArtist from './pages/Register/RegisterArtist';
