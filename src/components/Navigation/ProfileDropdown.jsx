@@ -3,15 +3,13 @@ import { Link } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 
 function ProfileDropdown({ profileMenuOpen, setProfileMenuOpen, handleLogout }) {
-  const { isAdmin, isUmetnik, isKupac } = useContext(AppContext);
+  const { isAdmin, isUmetnik } = useContext(AppContext);
 
   const profilePath = isAdmin
     ? "/admin/profil"
     : isUmetnik
     ? "/umetnik/profil"
-    : isKupac
-    ? "/kupac/profil"
-    : "/login"; // fallback ako niko nije ulogovan
+    : "/kupac/profil";
 
   return (
     <>

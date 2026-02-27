@@ -26,8 +26,8 @@ export default function AdminProfil() {
   const [savingEmail, setSavingEmail] = useState(false);
 
   // ✅ koristi se u delete formi
-  const [deletePass, setDeletePass] = useState("");
-  const [deleting, setDeleting] = useState(false);
+  // const [deletePass, setDeletePass] = useState("");
+  // const [deleting, setDeleting] = useState(false);
 
   const fetchMyProfile = async () => {
     setLoadingMy(true);

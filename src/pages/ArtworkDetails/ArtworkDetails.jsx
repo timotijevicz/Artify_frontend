@@ -55,19 +55,19 @@ export default function ArtworkDetails() {
   }, []);
 
   // ✅ FIX: memoizuj + deps
-  const normalizeImageUrl = useCallback(
-    (raw) => {
-      if (!raw) return null;
-      const s = String(raw).trim();
-      if (!s) return null;
+ const normalizeImageUrl = useCallback(
+  (raw) => {
+    if (!raw) return null;
+    const s = String(raw).trim();
+    if (!s) return null;
 
-      if (/^(https?:|data:|blob:)/i.test(s)) return s;
+    if (/^(https?:|data:|blob:)/i.test(s)) return s;
 
-      const clean = s.replace(/\\/g, "/").replace(/^\/+/, "");
-      return apiOrigin ? `${apiOrigin}/${clean}` : null;
-    },
-    [apiOrigin]
-  );
+    const clean = s.replace(/\\/g, "/").replace(/^\/+/, "");
+    return apiOrigin ? `${apiOrigin}/${clean}` : null;
+  },
+  [apiOrigin]
+);
 
   const extractArtistName = (a) => {
     if (!a) return "Nepoznati umetnik";
