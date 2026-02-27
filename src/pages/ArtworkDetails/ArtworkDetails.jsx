@@ -54,16 +54,20 @@ export default function ArtworkDetails() {
     }
   }, []);
 
-  const normalizeImageUrl = (raw) => {
-    if (!raw) return null;
-    const s = String(raw).trim();
-    if (!s) return null;
+  // ✅ FIX: memoizuj + deps
+  const normalizeImageUrl = useCallback(
+    (raw) => {
+      if (!raw) return null;
+      const s = String(raw).trim();
+      if (!s) return null;
 
-    if (/^(https?:|data:|blob:)/i.test(s)) return s;
+      if (/^(https?:|data:|blob:)/i.test(s)) return s;
 
-    const clean = s.replace(/\\/g, "/").replace(/^\/+/, "");
-    return apiOrigin ? `${apiOrigin}/${clean}` : null;
-  };
+      const clean = s.replace(/\\/g, "/").replace(/^\/+/, "");
+      return apiOrigin ? `${apiOrigin}/${clean}` : null;
+    },
+    [apiOrigin]
+  );
 
   const extractArtistName = (a) => {
     if (!a) return "Nepoznati umetnik";
@@ -513,7 +517,7 @@ export default function ArtworkDetails() {
     return () => {
       cancelled = true;
     };
-  }, [id, apiOrigin, loadPonude, loadReviews]);
+  }, [id, normalizeImageUrl, loadPonude, loadReviews]);
 
   // ===== AUTO REFRESH aukcije (polling) =====
   useEffect(() => {
@@ -527,7 +531,6 @@ export default function ArtworkDetails() {
     const artworkId = delo.umetnickoDeloId;
     const interval = setInterval(async () => {
       await loadPonude(artworkId);
-      // ✅ FIX: osveži delo istim id-em (umetnickoDeloId)
       await loadDeloLight(artworkId);
     }, 3000);
 
@@ -554,11 +557,9 @@ export default function ArtworkDetails() {
           umetnickoDeloId: delo.umetnickoDeloId,
         });
 
-        // refresh
         await loadDeloLight(delo.umetnickoDeloId);
         await loadPonude(delo.umetnickoDeloId);
 
-        // winner? (backend može kasnije da doda pobednikId u delo, ali ovde imamo i topBidRow)
         const winnerId =
           delo?.pobednikKorisnikId ||
           delo?.PobednikKorisnikId ||

@@ -9,7 +9,9 @@ function ProfileDropdown({ profileMenuOpen, setProfileMenuOpen, handleLogout }) 
     ? "/admin/profil"
     : isUmetnik
     ? "/umetnik/profil"
-    : "/kupac/profil"; // default
+    : isKupac
+    ? "/kupac/profil"
+    : "/login"; // fallback ako niko nije ulogovan
 
   return (
     <>

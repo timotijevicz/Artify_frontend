@@ -25,6 +25,7 @@ export default function AdminProfil() {
   });
   const [savingEmail, setSavingEmail] = useState(false);
 
+  // ✅ koristi se u delete formi
   const [deletePass, setDeletePass] = useState("");
   const [deleting, setDeleting] = useState(false);
 
@@ -68,7 +69,10 @@ export default function AdminProfil() {
 
     setSavingPass(true);
     try {
-      const res = await axiosInstance.post("Korisnik/PromenaLozinkeMojProfil", passForm);
+      const res = await axiosInstance.post(
+        "Korisnik/PromenaLozinkeMojProfil",
+        passForm
+      );
       alert(typeof res.data === "string" ? res.data : "Lozinka promenjena.");
 
       setPassForm({
@@ -99,7 +103,10 @@ export default function AdminProfil() {
 
     setSavingEmail(true);
     try {
-      const res = await axiosInstance.post("Korisnik/PromenaEmailaMojProfil", emailForm);
+      const res = await axiosInstance.post(
+        "Korisnik/PromenaEmailaMojProfil",
+        emailForm
+      );
       alert(typeof res.data === "string" ? res.data : "Email promenjen.");
 
       setEmailForm((p) => ({ ...p, lozinka: "" }));
@@ -116,6 +123,7 @@ export default function AdminProfil() {
     }
   };
 
+  // ✅ sada se koristi (forma ispod)
   const submitDeleteMy = async (e) => {
     e.preventDefault();
     if (deleting) return;
@@ -252,6 +260,28 @@ export default function AdminProfil() {
           disabled={savingEmail}
         >
           {savingEmail ? "Menjam..." : "Promeni email"}
+        </button>
+      </form>
+
+      {/* BRISANJE NALOGA */}
+      <form className="adminProfil__card adminProfil__form" onSubmit={submitDeleteMy}>
+        <h2 className="adminProfil__sectionTitle">Brisanje naloga</h2>
+
+        <input
+          className="adminProfil__input"
+          type="password"
+          placeholder="Potvrdi lozinkom"
+          value={deletePass}
+          onChange={(e) => setDeletePass(e.target.value)}
+          required
+        />
+
+        <button
+          className="adminProfil__btn adminProfil__btnPrimary"
+          type="submit"
+          disabled={deleting}
+        >
+          {deleting ? "Brišem..." : "Obriši nalog"}
         </button>
       </form>
     </div>
