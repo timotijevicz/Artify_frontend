@@ -23,8 +23,8 @@ export default function Card({
   const [omiljeno, setOmiljeno] = useState(false);
   const [favLoading, setFavLoading] = useState(false);
 
-  const isClickable = Boolean(authToken);
-  const detailsHref = id ? `/artwork/${id}` : "/galerija";
+  const isLocked = !authToken; // ✅ ako nije ulogovan -> lock
+  const detailsHref = isLocked ? "/login" : (id ? `/artwork/${id}` : "/galerija"); // ✅
 
   useEffect(() => {
     let cancelled = false;
@@ -32,9 +32,7 @@ export default function Card({
     const proveriFavorite = async () => {
       if (!isKupac || !authToken || !id) return;
       try {
-        const res = await axiosInstance.get(
-          `Favoriti/DaLiJeUFavoritima/${id}`
-        );
+        const res = await axiosInstance.get(`Favoriti/DaLiJeUFavoritima/${id}`);
         if (!cancelled) setOmiljeno(res.data === true);
       } catch {
         if (!cancelled) setOmiljeno(false);
@@ -87,15 +85,17 @@ export default function Card({
   };
 
   const handleCardClick = () => {
-    if (!isClickable) return;
+    // ✅ ako je lock, klik vodi na login
     navigate(detailsHref);
   };
 
   return (
     <article
-      className={`artify-card ${!isClickable ? "is-locked" : ""}`}
+      className={`artify-card ${isLocked ? "is-locked" : ""}`}
       onClick={handleCardClick}
-      role={isClickable ? "button" : undefined}
+      role="button"
+      aria-label={isLocked ? "Uloguj se da bi pregledao detalje" : `Detalji: ${naziv}`}
+      title={isLocked ? "Uloguj se da bi pregledao detalje" : ""}
     >
       <div className="artify-media">
         <img className="artify-img" src={slikaUrl} alt={naziv} />
@@ -108,15 +108,18 @@ export default function Card({
               type="button"
               className={`icon-btn ${omiljeno ? "is-liked" : ""}`}
               onClick={toggleFavorite}
-              disabled={favLoading}
+              disabled={favLoading || isLocked}  // ✅ lock -> disable like
+              title={isLocked ? "Uloguj se da koristiš favorite" : "Dodaj u favorite"}
             >
               <i className={omiljeno ? "fas fa-heart" : "far fa-heart"} />
             </button>
 
             <Link
-              to={detailsHref}
+              to={detailsHref} // ✅ lock -> /login
               className="icon-btn as-link"
               onClick={(e) => e.stopPropagation()}
+              title={isLocked ? "Uloguj se da vidiš detalje" : "Detalji"}
+              aria-label={isLocked ? "Uloguj se da vidiš detalje" : "Detalji"}
             >
               <i className="fas fa-arrow-right" />
             </Link>
@@ -125,10 +128,11 @@ export default function Card({
 
         <div className="artify-bottombar">
           <span className="chip">{tehnika}</span>
-          {dimenzije && (
-            <span className="chip chip--muted">{dimenzije}</span>
-          )}
+          {dimenzije && <span className="chip chip--muted">{dimenzije}</span>}
         </div>
+
+        {/* ✅ opciono: overlay lock kao kod artista (ako već imaš .is-locked stil) */}
+        {isLocked && <div className="artify-lock">🔒 Uloguj se</div>}
       </div>
 
       <div className="artify-body">
@@ -151,6 +155,11 @@ export default function Card({
         </div>
 
         <h3 className="artify-title">{naziv}</h3>
+
+        {/* ✅ ovo tražiš: dole ispod piše da se uloguje */}
+        {isLocked && (
+          <div className="artify-hint">Uloguj se da bi pregledao detalje dela</div>
+        )}
       </div>
     </article>
   );

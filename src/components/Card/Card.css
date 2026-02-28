@@ -290,3 +290,21 @@
 .artify-card.is-locked:hover::after{
   opacity: 1;
 }
+
+.artify-hint{
+  margin-top: 8px;
+  font-size: 13px;
+  opacity: .85;
+}
+.artify-lock{
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  background: rgba(0,0,0,.45);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 13px;
+  backdrop-filter: blur(6px);
+}

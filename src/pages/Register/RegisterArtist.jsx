@@ -143,63 +143,63 @@ export default function RegisterArtist() {
               />
             </label>
 
-            <div className="artify-grid2">
-              <label className="artify-field">
-                <span className="artify-label">Lozinka</span>
-                <div style={{ position: "relative" }}>
-                  <input
-                    className="artify-input"
-                    type={showPassword ? "text" : "password"} // ✅
-                    name="lozinka"
-                    placeholder="Min 8, veliko+malo slovo i broj"
-                    required
-                    minLength={8}
-                    value={formData.lozinka}
-                    onChange={onChange}
-                    disabled={loading}
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((s) => !s)}
-                    disabled={loading}
-                    aria-label={showPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
-                    title={showPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
-                    style={toggleBtnStyle}
-                  >
-                    {showPassword ? "🙈" : "👁️"}
-                  </button>
-                </div>
-              </label>
+            <label className="artify-field">
+              <span className="artify-label">Lozinka</span>
 
-              <label className="artify-field">
-                <span className="artify-label">Potvrda</span>
-                <div style={{ position: "relative" }}>
-                  <input
-                    className="artify-input"
-                    type={showConfirmPassword ? "text" : "password"} // ✅
-                    name="potvrdaLozinke"
-                    placeholder="Ponovi lozinku"
-                    required
-                    minLength={8}
-                    value={formData.potvrdaLozinke}
-                    onChange={onChange}
-                    disabled={loading}
-                    autoComplete="new-password"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword((s) => !s)}
-                    disabled={loading}
-                    aria-label={showConfirmPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
-                    title={showConfirmPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
-                    style={toggleBtnStyle}
-                  >
-                    {showConfirmPassword ? "🙈" : "👁️"}
-                  </button>
-                </div>
-              </label>
-            </div>
+              <div className="artify-input-wrap">
+                <input
+                  className="artify-input artify-input--withToggle"
+                  type={showPassword ? "text" : "password"}
+                  name="lozinka"
+                  placeholder="Min 8, veliko+malo slovo i broj"
+                  required
+                  minLength={8}
+                  value={formData.lozinka}
+                  onChange={onChange}
+                  disabled={loading}
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  className="artify-toggle-password"
+                  onClick={() => setShowPassword((s) => !s)}
+                  disabled={loading}
+                  aria-label={showPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
+                  title={showPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
+                >
+                  {showPassword ? "🙈" : "👁️"}
+                </button>
+              </div>
+            </label>
+
+            <label className="artify-field">
+              <span className="artify-label">Potvrda</span>
+
+              <div className="artify-input-wrap">
+                <input
+                  className="artify-input artify-input--withToggle"
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="potvrdaLozinke"
+                  placeholder="Ponovi lozinku"
+                  required
+                  minLength={8}
+                  value={formData.potvrdaLozinke}
+                  onChange={onChange}
+                  disabled={loading}
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  className="artify-toggle-password"
+                  onClick={() => setShowConfirmPassword((s) => !s)}
+                  disabled={loading}
+                  aria-label={showConfirmPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
+                  title={showConfirmPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
+                >
+                  {showConfirmPassword ? "🙈" : "👁️"}
+                </button>
+              </div>
+            </label>
 
             <div className="artify-section-title">Umetnički profil</div>
 
