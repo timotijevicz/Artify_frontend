@@ -286,13 +286,3 @@
 .artify-media-link.is-locked{
   cursor: pointer !important;
 }
-
-/* ✅ HARD KILL: sakrij sve nepoznate overlay elemente u centru */
-.artify-media > :not(.artify-img):not(.artify-topbar):not(.artify-bottombar):not(.artify-lock) {
-  /* ako ti negde postoji <div>Uloguj se za detalje</div> unutar media, ovo ga skida */
-}
-
-.artify-card.is-locked .artify-media > :not(.artify-img):not(.artify-topbar):not(.artify-bottombar):not(.artify-lock) {
-  /* ako taj overlay postoji samo kad je locked */
-  display: none !important;
-}

@@ -124,7 +124,6 @@ export default function Card({
             </Link>
           </div>
         </div>
-        <h3 className="artify-title">{naziv} --TEST123</h3>
         <div className="artify-bottombar">
           <span className="chip">{tehnika}</span>
           {dimenzije && <span className="chip chip--muted">{dimenzije}</span>}
