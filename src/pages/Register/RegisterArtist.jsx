@@ -86,19 +86,6 @@ export default function RegisterArtist() {
     }
   };
 
-  const toggleBtnStyle = {
-    position: "absolute",
-    right: 12,
-    top: "50%",
-    transform: "translateY(-50%)",
-    background: "transparent",
-    border: "none",
-    cursor: "pointer",
-    padding: 0,
-    lineHeight: 1,
-    fontSize: 18,
-  };
-
   return (
     <div className="artify-auth-page">
       <div className="artify-auth-card">
