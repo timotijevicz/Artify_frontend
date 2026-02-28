@@ -9,7 +9,7 @@ export default function ArtworkDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { isKupac, authToken, userId, isLoading } = useContext(AppContext);
+  const { isKupac, isAdmin, authToken, userId, isLoading } = useContext(AppContext);
 
   const [delo, setDelo] = useState(null);
   const [umetnik, setUmetnik] = useState(null);
@@ -54,20 +54,19 @@ export default function ArtworkDetails() {
     }
   }, []);
 
-  // ✅ FIX: memoizuj + deps
- const normalizeImageUrl = useCallback(
-  (raw) => {
-    if (!raw) return null;
-    const s = String(raw).trim();
-    if (!s) return null;
+  const normalizeImageUrl = useCallback(
+    (raw) => {
+      if (!raw) return null;
+      const s = String(raw).trim();
+      if (!s) return null;
 
-    if (/^(https?:|data:|blob:)/i.test(s)) return s;
+      if (/^(https?:|data:|blob:)/i.test(s)) return s;
 
-    const clean = s.replace(/\\/g, "/").replace(/^\/+/, "");
-    return apiOrigin ? `${apiOrigin}/${clean}` : null;
-  },
-  [apiOrigin]
-);
+      const clean = s.replace(/\\/g, "/").replace(/^\/+/, "");
+      return apiOrigin ? `${apiOrigin}/${clean}` : null;
+    },
+    [apiOrigin]
+  );
 
   const extractArtistName = (a) => {
     if (!a) return "Nepoznati umetnik";
@@ -239,9 +238,7 @@ export default function ArtworkDetails() {
   // ⚠️ koristi umetnickoDeloId (isti kao u Ponude)
   const loadDeloLight = useCallback(async (artworkId) => {
     try {
-      const res = await axiosInstance.get(
-        `UmetnickoDelo/DeloPoID/${artworkId}`
-      );
+      const res = await axiosInstance.get(`UmetnickoDelo/DeloPoID/${artworkId}`);
       const data = res.data;
       setDelo((prev) => ({ ...prev, ...data }));
     } catch {
@@ -429,7 +426,7 @@ export default function ArtworkDetails() {
     }
   };
 
-  // recenzija delete
+  // recenzija delete (svoja)
   const handleDeleteReview = async () => {
     if (!myReview) return;
     try {
@@ -444,6 +441,61 @@ export default function ArtworkDetails() {
       setReviewErr("Greška pri brisanju recenzije.");
     } finally {
       setReviewSaving(false);
+    }
+  };
+
+  // ✅ ADMIN: brisanje bilo koje recenzije
+  const handleAdminDeleteReview = async (reviewId) => {
+    if (!isAdmin) return;
+
+    const ok = window.confirm("Obrisati ovu recenziju? (Admin)");
+    if (!ok) return;
+
+    try {
+      setReviewsLoading(true);
+      setReviewErr("");
+
+      await axiosInstance.delete(`Recenzija/BrisanjeRecenzije/${reviewId}`);
+
+      await loadReviews(delo.umetnickoDeloId);
+    } catch {
+      setReviewErr("Greška pri brisanju recenzije (admin).");
+    } finally {
+      setReviewsLoading(false);
+    }
+  };
+
+  // ✅ ADMIN: ukloni delo (soft delete => status Uklonjeno) preko backend rute
+  // Backend: DELETE api/UmetnickoDelo/ObrisiDelo/{id}
+  const handleAdminRemoveArtwork = async () => {
+    if (!isAdmin || !delo?.umetnickoDeloId) return;
+
+    const ok = window.confirm(
+      "Ukloniti umetničko delo? (Status će postati 'Uklonjeno')"
+    );
+    if (!ok) return;
+
+    try {
+      setLoading(true);
+      setError("");
+
+      const artworkId = delo.umetnickoDeloId;
+
+      await axiosInstance.delete(`UmetnickoDelo/ObrisiDelo/${artworkId}`);
+
+      // osveži lokalno stanje (da odmah pokaže 'Uklonjeno')
+      await loadDeloLight(artworkId);
+
+      // (opciono) ako želiš da ga izbaciš sa stranice:
+      // navigate("/galerija");
+    } catch (e) {
+      setError(
+        e?.response?.status === 403
+          ? "Nemaš dozvolu (admin required)."
+          : "Greška pri uklanjanju dela."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -665,6 +717,21 @@ export default function ArtworkDetails() {
                 <>
                   <span className="af-dot" />
                   <span className="af-live">● Live {pollingActive ? "uključeno" : ""}</span>
+                </>
+              )}
+
+              {/* ✅ ADMIN: ukloni delo */}
+              {isAdmin && !isRemovedByStatus && (
+                <>
+                  <span className="af-dot" />
+                  <button
+                    type="button"
+                    className="af-btn af-btnGhost"
+                    onClick={handleAdminRemoveArtwork}
+                    title="Admin: ukloni delo (status Uklonjeno)"
+                  >
+                    Ukloni delo
+                  </button>
                 </>
               )}
             </div>
@@ -970,8 +1037,25 @@ export default function ArtworkDetails() {
                   <div key={rid} className="af-reviewItem">
                     <div className="af-reviewTop">
                       <div className="af-reviewWho">{who}</div>
-                      <div className="af-reviewRating">★ {rating}/5</div>
+
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <div className="af-reviewRating">★ {rating}/5</div>
+
+                        {/* ✅ ADMIN: obriši bilo čiju recenziju */}
+                        {isAdmin && (
+                          <button
+                            type="button"
+                            className="af-btn af-btnGhost"
+                            onClick={() => handleAdminDeleteReview(rid)}
+                            disabled={reviewsLoading}
+                            title="Admin: obriši recenziju"
+                          >
+                            Obriši
+                          </button>
+                        )}
+                      </div>
                     </div>
+
                     <div className="af-reviewText">{text}</div>
                   </div>
                 );
