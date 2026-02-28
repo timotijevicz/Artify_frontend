@@ -267,3 +267,22 @@
   font-size: 13px;
   backdrop-filter: blur(6px);
 }
+
+/* ✅ FORCE: ugasi sve lock-overlay tekstove preko slike */
+.artify-card.is-locked::after,
+.artify-media-link.is-locked::after{
+  content: none !important;
+  display: none !important;
+}
+
+/* (ako postoji neka varijanta preko media) */
+.artify-media::after,
+.artify-media::before{
+  content: none !important;
+}
+
+/* ✅ locked kartica i dalje treba da bude klikabilna (na login) */
+.artify-card.is-locked,
+.artify-media-link.is-locked{
+  cursor: pointer !important;
+}
