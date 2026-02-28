@@ -250,3 +250,35 @@
   .artify-auth-right{ min-height: 240px; }
   .artify-grid2{ grid-template-columns: 1fr; }
 }
+
+/* ===========================
+   ✅ DODATO: show/hide password bez “smanjenja” inputa
+   =========================== */
+
+.artify-input{
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.artify-input-wrap{
+  position: relative;
+  width: 100%;
+  display: block;
+}
+
+.artify-input--withToggle{
+  padding-right: 44px; /* prostor za oko */
+}
+
+.artify-toggle-password{
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  font-size: 18px;
+}
