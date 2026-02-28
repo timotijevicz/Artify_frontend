@@ -23,8 +23,8 @@ export default function Card({
   const [omiljeno, setOmiljeno] = useState(false);
   const [favLoading, setFavLoading] = useState(false);
 
-  const isLocked = !authToken; // ✅ ako nije ulogovan -> lock
-  const detailsHref = isLocked ? "/login" : (id ? `/artwork/${id}` : "/galerija"); // ✅
+  const isLocked = !authToken;
+  const detailsHref = isLocked ? "/login" : (id ? `/artwork/${id}` : "/galerija");
 
   useEffect(() => {
     let cancelled = false;
@@ -85,7 +85,6 @@ export default function Card({
   };
 
   const handleCardClick = () => {
-    // ✅ ako je lock, klik vodi na login
     navigate(detailsHref);
   };
 
@@ -108,14 +107,14 @@ export default function Card({
               type="button"
               className={`icon-btn ${omiljeno ? "is-liked" : ""}`}
               onClick={toggleFavorite}
-              disabled={favLoading || isLocked}  // ✅ lock -> disable like
+              disabled={favLoading || isLocked}
               title={isLocked ? "Uloguj se da koristiš favorite" : "Dodaj u favorite"}
             >
               <i className={omiljeno ? "fas fa-heart" : "far fa-heart"} />
             </button>
 
             <Link
-              to={detailsHref} // ✅ lock -> /login
+              to={detailsHref}
               className="icon-btn as-link"
               onClick={(e) => e.stopPropagation()}
               title={isLocked ? "Uloguj se da vidiš detalje" : "Detalji"}
@@ -130,9 +129,6 @@ export default function Card({
           <span className="chip">{tehnika}</span>
           {dimenzije && <span className="chip chip--muted">{dimenzije}</span>}
         </div>
-
-        {/* ✅ opciono: overlay lock kao kod artista (ako već imaš .is-locked stil) */}
-        {isLocked && <div className="artify-lock">🔒 Uloguj se</div>}
       </div>
 
       <div className="artify-body">
@@ -156,7 +152,7 @@ export default function Card({
 
         <h3 className="artify-title">{naziv}</h3>
 
-        {/* ✅ ovo tražiš: dole ispod piše da se uloguje */}
+        {/* ✅ samo dole, kao kod artista */}
         {isLocked && (
           <div className="artify-hint">Uloguj se da bi pregledao detalje dela</div>
         )}

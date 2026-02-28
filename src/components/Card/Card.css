@@ -16,6 +16,7 @@
   overflow: hidden;
   box-shadow: 0 18px 70px rgba(0,0,0,.22);
   transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+  cursor: pointer; /* ✅ ostaje klikabilno */
 }
 
 .artify-card:hover{
@@ -45,7 +46,6 @@
   display:block;
   height: 100%;
 }
-
 
 .artify-overlay{
   position:absolute;
@@ -222,14 +222,18 @@
   text-overflow: ellipsis;
 }
 
+/* ✅ Hint dole (ovo ostaje) */
 .artify-hint{
+  margin-top: 8px;
+  font-size: 13px;
+  opacity: .85;
   color: rgba(233,240,255,.55);
-  font-size: .86rem;
 }
 
 .artify-hint .arrow{
   color: rgba(233,240,255,.75);
 }
+
 .card-container{
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -244,58 +248,13 @@
   cursor: not-allowed;
 }
 
+/* ✅ ako ipak koristiš media-link, samo nek bude normalan */
 .artify-media-link.is-locked{
-  cursor: default;
-}
-
-.artify-media-link.is-locked::after{
-  content: "Uloguj se za detalje";
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: rgba(0,0,0,.45);
-  color: #fff;
-  font-weight: 900;
-  font-size: .9rem;
-  opacity: 0;
-  transition: opacity 180ms ease;
-}
-
-.artify-card:hover .artify-media-link.is-locked::after{
-  opacity: 1;
-}
-
-.artify-card{
   cursor: pointer;
 }
 
-.artify-card.is-locked{
-  cursor: default;
-}
 
-.artify-card.is-locked::after{
-  content: "Uloguj se za detalje";
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: rgba(0,0,0,.45);
-  color: #fff;
-  font-weight: 900;
-  opacity: 0;
-  transition: opacity 180ms ease;
-}
-
-.artify-card.is-locked:hover::after{
-  opacity: 1;
-}
-
-.artify-hint{
-  margin-top: 8px;
-  font-size: 13px;
-  opacity: .85;
-}
+/* ✅ (opciono) lock badge dole levo preko slike */
 .artify-lock{
   position: absolute;
   left: 12px;
