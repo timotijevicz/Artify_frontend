@@ -26,11 +26,11 @@ export default function CardArtist({
         aria-label={authToken ? `Profil: ${ime}` : "Prijavi se da vidiš profil"}
         title={authToken ? "" : "Prijavi se da vidiš profil"}
       >
-        <div className="artist-media">
+        {/* <div className="artist-media">
           <img src={avatarUrl} alt={ime} className="artist-img" />
           <div className="artist-overlay" />
           {!authToken && <div className="artist-lock">🔒 Prijavi se</div>}
-        </div>
+        </div> */}
 
         <div className="artist-body">
           <div className="artist-top">
