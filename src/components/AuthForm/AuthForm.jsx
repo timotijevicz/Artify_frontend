@@ -2,7 +2,6 @@ import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "./AuthForm.css";
 
-
 export default function ArtifyAuthForm({
   title,
   subtitle,
@@ -20,6 +19,7 @@ export default function ArtifyAuthForm({
   }, [fields]);
 
   const [formData, setFormData] = useState(initialState);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,28 +37,58 @@ export default function ArtifyAuthForm({
         <div className="artify-auth-left">
           <div className="artify-auth-header">
             <h1 className="artify-auth-title">{title}</h1>
-            {subtitle ? (
-              <p className="artify-auth-subtitle">{subtitle}</p>
-            ) : null}
+            {subtitle ? <p className="artify-auth-subtitle">{subtitle}</p> : null}
           </div>
 
           <form className="artify-auth-form" onSubmit={handleSubmit}>
-            {fields.map((f) => (
-              <label key={f.name} className="artify-field">
-                <span className="artify-label">{f.label}</span>
-                <input
-                  className="artify-input"
-                  name={f.name}
-                  type={f.type}
-                  placeholder={f.placeholder}
-                  required={f.required}
-                  value={formData[f.name] || ""}
-                  onChange={handleChange}
-                  disabled={loading}
-                  autoComplete={f.type === "password" ? "current-password" : "email"}
-                />
-              </label>
-            ))}
+            {fields.map((f) => {
+              const isPassword = f.type === "password";
+              const inputType = isPassword ? (showPassword ? "text" : "password") : f.type;
+
+              return (
+                <label key={f.name} className="artify-field">
+                  <span className="artify-label">{f.label}</span>
+
+                  <div style={{ position: "relative" }}>
+                    <input
+                      className="artify-input"
+                      name={f.name}
+                      type={inputType}
+                      placeholder={f.placeholder}
+                      required={f.required}
+                      value={formData[f.name] || ""}
+                      onChange={handleChange}
+                      disabled={loading}
+                      autoComplete={isPassword ? "current-password" : "email"}
+                    />
+
+                    {isPassword && (
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((s) => !s)}
+                        aria-label={showPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
+                        title={showPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
+                        style={{
+                          position: "absolute",
+                          right: 12,
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          background: "transparent",
+                          border: "none",
+                          cursor: "pointer",
+                          padding: 0,
+                          lineHeight: 1,
+                          fontSize: 18,
+                        }}
+                        disabled={loading}
+                      >
+                        {showPassword ? "🙈" : "👁️"}
+                      </button>
+                    )}
+                  </div>
+                </label>
+              );
+            })}
 
             {error ? <div className="artify-error">{error}</div> : null}
 
