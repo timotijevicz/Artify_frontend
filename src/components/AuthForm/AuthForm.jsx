@@ -19,7 +19,7 @@ export default function ArtifyAuthForm({
   }, [fields]);
 
   const [formData, setFormData] = useState(initialState);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // ✅ DODATO
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,54 +41,61 @@ export default function ArtifyAuthForm({
           </div>
 
           <form className="artify-auth-form" onSubmit={handleSubmit}>
-            {fields.map((f) => {
-              const isPassword = f.type === "password";
-              const inputType = isPassword ? (showPassword ? "text" : "password") : f.type;
+            {fields.map((f) => (
+              <label key={f.name} className="artify-field">
+                <span className="artify-label">{f.label}</span>
 
-              return (
-                <label key={f.name} className="artify-field">
-                  <span className="artify-label">{f.label}</span>
-
+                {/* ✅ NE DIRAMO FORMU, samo ako je password ubacimo wrapper + dugme */}
+                {f.type === "password" ? (
                   <div style={{ position: "relative" }}>
                     <input
                       className="artify-input"
                       name={f.name}
-                      type={inputType}
+                      type={showPassword ? "text" : "password"} // ✅
                       placeholder={f.placeholder}
                       required={f.required}
                       value={formData[f.name] || ""}
                       onChange={handleChange}
                       disabled={loading}
-                      autoComplete={isPassword ? "current-password" : "email"}
+                      autoComplete="current-password"
                     />
-
-                    {isPassword && (
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword((s) => !s)}
-                        aria-label={showPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
-                        title={showPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
-                        style={{
-                          position: "absolute",
-                          right: 12,
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          background: "transparent",
-                          border: "none",
-                          cursor: "pointer",
-                          padding: 0,
-                          lineHeight: 1,
-                          fontSize: 18,
-                        }}
-                        disabled={loading}
-                      >
-                        {showPassword ? "🙈" : "👁️"}
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((s) => !s)}
+                      disabled={loading}
+                      aria-label={showPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
+                      title={showPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
+                      style={{
+                        position: "absolute",
+                        right: 12,
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        background: "transparent",
+                        border: "none",
+                        cursor: "pointer",
+                        padding: 0,
+                        lineHeight: 1,
+                        fontSize: 18,
+                      }}
+                    >
+                      {showPassword ? "🙈" : "👁️"}
+                    </button>
                   </div>
-                </label>
-              );
-            })}
+                ) : (
+                  <input
+                    className="artify-input"
+                    name={f.name}
+                    type={f.type}
+                    placeholder={f.placeholder}
+                    required={f.required}
+                    value={formData[f.name] || ""}
+                    onChange={handleChange}
+                    disabled={loading}
+                    autoComplete={f.type === "password" ? "current-password" : "email"}
+                  />
+                )}
+              </label>
+            ))}
 
             {error ? <div className="artify-error">{error}</div> : null}
 
@@ -105,11 +112,6 @@ export default function ArtifyAuthForm({
             <div className="artify-auth-switch">
               Nemate nalog? <Link to="/registracija">Registracija korisnika →</Link>
             </div>
-            {/* <div className="artify-auth-footnote">
-              <span className="artify-muted">
-                Savet: koristi jaku lozinku i ne deli nalog.
-              </span>
-            </div> */}
           </form>
         </div>
 

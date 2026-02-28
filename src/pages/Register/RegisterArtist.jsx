@@ -1,3 +1,4 @@
+// RegisterArtist.jsx — ista forma, samo show/hide za lozinku i potvrdu u gridu
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../../components/axios/axiosInstance";
@@ -26,6 +27,9 @@ export default function RegisterArtist() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false); // ✅ DODATO
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // ✅ DODATO
 
   const [formData, setFormData] = useState({
     imeIPrezime: "",
@@ -82,6 +86,19 @@ export default function RegisterArtist() {
     }
   };
 
+  const toggleBtnStyle = {
+    position: "absolute",
+    right: 12,
+    top: "50%",
+    transform: "translateY(-50%)",
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
+    padding: 0,
+    lineHeight: 1,
+    fontSize: 18,
+  };
+
   return (
     <div className="artify-auth-page">
       <div className="artify-auth-card">
@@ -129,34 +146,58 @@ export default function RegisterArtist() {
             <div className="artify-grid2">
               <label className="artify-field">
                 <span className="artify-label">Lozinka</span>
-                <input
-                  className="artify-input"
-                  type="password"
-                  name="lozinka"
-                  placeholder="Min 8, veliko+malo slovo i broj"
-                  required
-                  minLength={8}
-                  value={formData.lozinka}
-                  onChange={onChange}
-                  disabled={loading}
-                  autoComplete="new-password"
-                />
+                <div style={{ position: "relative" }}>
+                  <input
+                    className="artify-input"
+                    type={showPassword ? "text" : "password"} // ✅
+                    name="lozinka"
+                    placeholder="Min 8, veliko+malo slovo i broj"
+                    required
+                    minLength={8}
+                    value={formData.lozinka}
+                    onChange={onChange}
+                    disabled={loading}
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((s) => !s)}
+                    disabled={loading}
+                    aria-label={showPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
+                    title={showPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
+                    style={toggleBtnStyle}
+                  >
+                    {showPassword ? "🙈" : "👁️"}
+                  </button>
+                </div>
               </label>
 
               <label className="artify-field">
                 <span className="artify-label">Potvrda</span>
-                <input
-                  className="artify-input"
-                  type="password"
-                  name="potvrdaLozinke"
-                  placeholder="Ponovi lozinku"
-                  required
-                  minLength={8}
-                  value={formData.potvrdaLozinke}
-                  onChange={onChange}
-                  disabled={loading}
-                  autoComplete="new-password"
-                />
+                <div style={{ position: "relative" }}>
+                  <input
+                    className="artify-input"
+                    type={showConfirmPassword ? "text" : "password"} // ✅
+                    name="potvrdaLozinke"
+                    placeholder="Ponovi lozinku"
+                    required
+                    minLength={8}
+                    value={formData.potvrdaLozinke}
+                    onChange={onChange}
+                    disabled={loading}
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((s) => !s)}
+                    disabled={loading}
+                    aria-label={showConfirmPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
+                    title={showConfirmPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
+                    style={toggleBtnStyle}
+                  >
+                    {showConfirmPassword ? "🙈" : "👁️"}
+                  </button>
+                </div>
               </label>
             </div>
 

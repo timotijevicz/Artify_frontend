@@ -27,6 +27,9 @@ export default function RegisterUser() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const [showPassword, setShowPassword] = useState(false); // ✅ DODATO
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // ✅ DODATO
+
   const [formData, setFormData] = useState({
     imeIPrezime: "",
     email: "",
@@ -66,6 +69,19 @@ export default function RegisterUser() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const toggleBtnStyle = {
+    position: "absolute",
+    right: 12,
+    top: "50%",
+    transform: "translateY(-50%)",
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
+    padding: 0,
+    lineHeight: 1,
+    fontSize: 18,
   };
 
   return (
@@ -112,34 +128,58 @@ export default function RegisterUser() {
 
             <label className="artify-field">
               <span className="artify-label">Lozinka</span>
-              <input
-                className="artify-input"
-                type="password"
-                name="lozinka"
-                placeholder="Min 8, veliko+malo slovo i broj"
-                required
-                minLength={8}
-                value={formData.lozinka}
-                onChange={onChange}
-                disabled={loading}
-                autoComplete="new-password"
-              />
+              <div style={{ position: "relative" }}>
+                <input
+                  className="artify-input"
+                  type={showPassword ? "text" : "password"} // ✅
+                  name="lozinka"
+                  placeholder="Min 8, veliko+malo slovo i broj"
+                  required
+                  minLength={8}
+                  value={formData.lozinka}
+                  onChange={onChange}
+                  disabled={loading}
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((s) => !s)}
+                  disabled={loading}
+                  aria-label={showPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
+                  title={showPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
+                  style={toggleBtnStyle}
+                >
+                  {showPassword ? "🙈" : "👁️"}
+                </button>
+              </div>
             </label>
 
             <label className="artify-field">
               <span className="artify-label">Potvrda lozinke</span>
-              <input
-                className="artify-input"
-                type="password"
-                name="potvrdaLozinke"
-                placeholder="Ponovi lozinku"
-                required
-                minLength={8}
-                value={formData.potvrdaLozinke}
-                onChange={onChange}
-                disabled={loading}
-                autoComplete="new-password"
-              />
+              <div style={{ position: "relative" }}>
+                <input
+                  className="artify-input"
+                  type={showConfirmPassword ? "text" : "password"} // ✅
+                  name="potvrdaLozinke"
+                  placeholder="Ponovi lozinku"
+                  required
+                  minLength={8}
+                  value={formData.potvrdaLozinke}
+                  onChange={onChange}
+                  disabled={loading}
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword((s) => !s)}
+                  disabled={loading}
+                  aria-label={showConfirmPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
+                  title={showConfirmPassword ? "Sakrij lozinku" : "Prikaži lozinku"}
+                  style={toggleBtnStyle}
+                >
+                  {showConfirmPassword ? "🙈" : "👁️"}
+                </button>
+              </div>
             </label>
 
             {error ? <div className="artify-error">{error}</div> : null}
@@ -171,9 +211,7 @@ export default function RegisterUser() {
               <span className="dot" />
               Artify • community
             </div>
-            <div className="artify-auth-quote">
-              “Umetnost počinje tamo gde reči staju.”
-            </div>
+            <div className="artify-auth-quote">“Umetnost počinje tamo gde reči staju.”</div>
           </div>
         </div>
       </div>
