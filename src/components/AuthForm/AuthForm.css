@@ -211,24 +211,19 @@
   }
 }
 
-/* ===========================
-   ✅ DODATO: fix za wrapper + input
-   =========================== */
-
-/* kad input više nije direktan grid item (u wrapperu), mora eksplicitno 100% */
 .artify-input{
   width: 100%;
   box-sizing: border-box;
 }
 
-/* opciono: klasa za wrapper oko password inputa */
+
 .artify-input-wrap{
   position: relative;
   width: 100%;
   display: block;
 }
 
-/* da tekst ne ide ispod oka */
+
 .artify-input--withToggle{
   padding-right: 44px;
 }
